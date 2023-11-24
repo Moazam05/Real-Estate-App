@@ -4,7 +4,8 @@
   "description": "Real Estate App",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "debug": "ndb server.js"
   },
   "author": "Salman Muazam",
   "license": "ISC",

@@ -30,7 +30,22 @@ export const authApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    googleLogin: builder.mutation({
+      query: (data) => {
+        return {
+          url: "users/google",
+          method: "POST",
+          body: data,
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        };
+      },
+    }),
   }),
 });
 
-export const { useSignupMutation, useLoginMutation } = authApiSlice;
+export const { useSignupMutation, useLoginMutation, useGoogleLoginMutation } =
+  authApiSlice;

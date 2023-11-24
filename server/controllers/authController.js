@@ -3,6 +3,7 @@ const AppError = require("../utils/appError");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
+const bcrypt = require("bcryptjs");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -55,6 +56,28 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 3) If everything ok, send token to client
   createSendToken(user, 200, res);
+});
+
+exports.google = catchAsync(async (req, res, next) => {
+  const { name, email, photo } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    // just return the user
+    createSendToken(user, 200, res);
+  } else {
+    const password = await bcrypt.hash(Math.random().toString(), 12);
+
+    const newUser = await User.create({
+      username: name,
+      email,
+      password,
+      avatar: photo,
+    });
+
+    createSendToken(newUser, 201, res);
+  }
 });
 
 exports.protect = catchAsync(async (req, res, next) => {

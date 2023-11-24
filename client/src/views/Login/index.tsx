@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { Box, Grid, Button } from "@mui/material";
 // React Icons
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
-import { FaGoogle } from "react-icons/fa";
 // Formik Imports
 import { Form, Formik, FormikProps } from "formik";
 // Utils Imports
@@ -20,6 +19,7 @@ import DotLoader from "../../components/Spinner/dotLoader";
 import { loginSchema } from "./components/validationSchema";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
+import GoogleOAuth from "../../components/OAuth";
 
 interface ISLoginForm {
   email: string;
@@ -195,27 +195,7 @@ const Login = () => {
                           )}
                         </Button>
                       </Box>
-                      <Button
-                        variant="contained"
-                        fullWidth
-                        sx={{
-                          padding: "5px 30px",
-                          textTransform: "capitalize",
-                          margin: "10px 0 20px 0",
-                          background: "#de4a39",
-                          height: "40px",
-                          color: "#fff",
-                          "&:hover": {
-                            background: "#de4a39",
-                          },
-                        }}
-                        startIcon={<FaGoogle style={{ fontSize: "15px" }} />}
-                        onClick={() => {
-                          alert("Google");
-                        }}
-                      >
-                        Continue With Google
-                      </Button>
+                      <GoogleOAuth />
                       <Box
                         sx={{
                           margin: "0 0 10px 0",

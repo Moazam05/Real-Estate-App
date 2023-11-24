@@ -18,6 +18,7 @@
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
+    "firebase": "^10.6.0",
     "formik": "^2.4.5",
     "libphonenumber-js": "^1.10.51",
     "material-ui-phone-number": "^3.0.0",

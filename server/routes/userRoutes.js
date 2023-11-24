@@ -8,5 +8,7 @@ const router = express.Router();
 // AUTH CONTROLLER
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
+// GOOGLE
+router.post("/google", authController.google);
 
 module.exports = router;
