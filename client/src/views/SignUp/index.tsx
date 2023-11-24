@@ -1,17 +1,22 @@
+// React Imports
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// MUI Imports
 import { Box, Grid, Button } from "@mui/material";
-import { Heading, SubHeading } from "../../components/Heading";
+// React Icons
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { FaGoogle } from "react-icons/fa";
 // Formik Imports
 import { Form, Formik, FormikProps } from "formik";
+// Utils Imports
 import { onKeyDown } from "../../utils";
-import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
-import ToastAlert from "../../components/ToastAlert/ToastAlert";
-import { FaGoogle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { signUpSchema } from "./components/validationSchema";
+// Redux Imports
 import { useSignupMutation } from "../../redux/api/authApiSlice";
 import DotLoader from "../../components/Spinner/dotLoader";
+import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
+import ToastAlert from "../../components/ToastAlert/ToastAlert";
+import { signUpSchema } from "./components/validationSchema";
+import { Heading, SubHeading } from "../../components/Heading";
 
 interface ISSignUpForm {
   userName: string;

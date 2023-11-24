@@ -1,15 +1,25 @@
+// React Imports
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+// Material UI Imports
 import { Box, Grid, Button } from "@mui/material";
-import { Heading, SubHeading } from "../../components/Heading";
+// React Icons
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { FaGoogle } from "react-icons/fa";
 // Formik Imports
 import { Form, Formik, FormikProps } from "formik";
-import { loginSchema } from "./components/validationSchema";
+// Utils Imports
 import { onKeyDown } from "../../utils";
+// Redux Imports
+import { useLoginMutation } from "../../redux/api/authApiSlice";
+import { setUser } from "../../redux/auth/authSlice";
+// Component Imports
+import { Heading, SubHeading } from "../../components/Heading";
+import DotLoader from "../../components/Spinner/dotLoader";
+import { loginSchema } from "./components/validationSchema";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
-import { FaGoogle } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
 interface ISLoginForm {
   email: string;
@@ -17,6 +27,7 @@ interface ISLoginForm {
 }
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // states
@@ -41,7 +52,40 @@ const Login = () => {
     setToast({ ...toast, appearence: false });
   };
 
-  const LoginHandler = async (data: ISLoginForm) => {};
+  // Sign Up Api Bind
+  const [loginUser, { isLoading }] = useLoginMutation();
+
+  const LoginHandler = async (data: ISLoginForm) => {
+    const payload = {
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const user: any = await loginUser(payload);
+
+      if (user?.data?.status) {
+        dispatch(setUser(user?.data));
+        localStorage.setItem("user", JSON.stringify(user?.data));
+        navigate("/");
+      }
+      if (user?.error) {
+        setToast({
+          ...toast,
+          message: user?.error?.data?.message,
+          appearence: true,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("SignUp Error:", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
+    }
+  };
 
   return (
     <Box sx={{ margin: "60px 0" }}>
@@ -130,7 +174,7 @@ const Login = () => {
                           type="submit"
                           variant="contained"
                           fullWidth
-                          // disabled={isLoading}
+                          disabled={isLoading}
                           sx={{
                             padding: "5px 30px",
                             textTransform: "capitalize",
@@ -144,8 +188,11 @@ const Login = () => {
                             },
                           }}
                         >
-                          {/* {isLoading ? "Login..." : "Login"} */}
-                          Login
+                          {isLoading ? (
+                            <DotLoader color="#fff" size={12} />
+                          ) : (
+                            "Login"
+                          )}
                         </Button>
                       </Box>
                       <Button
