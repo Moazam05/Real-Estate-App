@@ -1,7 +1,7 @@
 // React Imports
 import { useNavigate } from "react-router-dom";
 // Material UI Imports
-import { Box, Avatar, Tooltip } from "@mui/material";
+import { Box, Avatar, Tooltip, Grid } from "@mui/material";
 // Component Imports
 import { Heading } from "../Heading";
 import SearchBar from "../SearchBar";
@@ -32,58 +32,87 @@ const Header = () => {
           boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.25)",
         }}
       >
-        <Box
-          onClick={() => {
-            navigate("/");
-          }}
-          sx={{ display: "flex", cursor: "pointer" }}
+        <Grid
+          container
+          spacing={2}
+          sx={{ display: "flex", alignItems: "center" }}
         >
-          <Heading sx={{ color: "#64748b" }}>Real</Heading>
-          <Heading sx={{ color: "#334155" }}>Estate</Heading>
-        </Box>
-        <Box sx={{ width: "300px" }}>
-          <SearchBar placeholder="Search..." />
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Box
-            sx={menuStyle}
-            onClick={() => {
-              navigate("/");
-            }}
-          >
-            Home
-          </Box>
-          <Box
-            sx={menuStyle}
-            onClick={() => {
-              navigate("/about");
-            }}
-          >
-            About
-          </Box>
-          {avatar ? (
-            <Box sx={{ cursor: "pointer" }}>
-              <Tooltip title="Profile">
-                <Avatar
-                  alt="User Avatar"
-                  src={avatar}
-                  onClick={() => {
-                    navigate("/profile");
-                  }}
-                />
-              </Tooltip>
-            </Box>
-          ) : (
+          <Grid item xs={4}>
             <Box
-              sx={menuStyle}
               onClick={() => {
-                navigate("/login");
+                navigate("/");
+              }}
+              sx={{ display: "flex", cursor: "pointer" }}
+            >
+              <Heading sx={{ color: "#64748b" }}>Real</Heading>
+              <Heading sx={{ color: "#334155" }}>Estate</Heading>
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box>
+              <SearchBar placeholder="Search..." />
+            </Box>
+          </Grid>
+          <Grid item xs={4}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                justifyContent: "end",
               }}
             >
-              Log in
+              <Box
+                sx={menuStyle}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Home
+              </Box>
+              <Box
+                sx={menuStyle}
+                onClick={() => {
+                  navigate("/about");
+                }}
+              >
+                About
+              </Box>
+              {avatar ? (
+                <>
+                  <Box
+                    sx={menuStyle}
+                    onClick={() => {
+                      navigate("/about");
+                    }}
+                  >
+                    Create Listing
+                  </Box>
+                  <Box sx={{ cursor: "pointer" }}>
+                    <Tooltip title="Profile">
+                      <Avatar
+                        alt="User Avatar"
+                        src={avatar}
+                        onClick={() => {
+                          navigate("/profile");
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+                </>
+              ) : (
+                <Box
+                  sx={menuStyle}
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                >
+                  Log in
+                </Box>
+              )}
             </Box>
-          )}
-        </Box>
+          </Grid>
+        </Grid>
       </Box>
     </header>
   );
