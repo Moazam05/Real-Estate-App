@@ -57,7 +57,9 @@ export default function SearchBar({
           <InputAdornment position="start">
             <IoIosSearch
               style={{
-                color: "#C5C5C5",
+                color: "#334155",
+                fontWeight: "bold",
+                fontSize: "18px",
               }}
             />
           </InputAdornment>

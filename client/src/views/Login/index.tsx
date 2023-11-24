@@ -42,8 +42,9 @@ const Login = () => {
   };
 
   const LoginHandler = async (data: ISLoginForm) => {};
+
   return (
-    <Box sx={{ margin: "75px 0" }}>
+    <Box sx={{ margin: "60px 0" }}>
       <Grid container spacing={2}>
         <Grid item xs={4}></Grid>
         <Grid item xs={4}>
@@ -137,6 +138,7 @@ const Login = () => {
                             background: "#334155",
                             height: "40px",
                             color: "#fff",
+                            lineHeight: "0",
                             "&:hover": {
                               background: "#334155",
                             },

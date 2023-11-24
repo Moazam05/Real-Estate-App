@@ -10,6 +10,8 @@ import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { signUpSchema } from "./components/validationSchema";
+import { useSignupMutation } from "../../redux/api/authApiSlice";
+import DotLoader from "../../components/Spinner/dotLoader";
 
 interface ISSignUpForm {
   userName: string;
@@ -43,9 +45,50 @@ const SignUp = () => {
     setToast({ ...toast, appearence: false });
   };
 
-  const SignUpHandler = async (data: ISSignUpForm) => {};
+  // Sign Up Api Bind
+  const [signupUser, { isLoading }] = useSignupMutation();
+
+  const SignUpHandler = async (data: ISSignUpForm) => {
+    const payload = {
+      username: data.userName,
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      const user: any = await signupUser(payload);
+
+      if (user?.data?.status) {
+        setToast({
+          ...toast,
+          message: "User Successfully Created",
+          appearence: true,
+          type: "success",
+        });
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
+      }
+      if (user?.error) {
+        setToast({
+          ...toast,
+          message: user?.error?.data?.message,
+          appearence: true,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("SignUp Error:", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
+    }
+  };
+
   return (
-    <Box sx={{ margin: "75px 0" }}>
+    <Box sx={{ margin: "60px 0" }}>
       <Grid container spacing={2}>
         <Grid item xs={4}></Grid>
         <Grid item xs={4}>
@@ -156,7 +199,7 @@ const SignUp = () => {
                           type="submit"
                           variant="contained"
                           fullWidth
-                          // disabled={isLoading}
+                          disabled={isLoading}
                           sx={{
                             padding: "5px 30px",
                             textTransform: "capitalize",
@@ -164,13 +207,17 @@ const SignUp = () => {
                             background: "#334155",
                             height: "40px",
                             color: "#fff",
+                            lineHeight: "0",
                             "&:hover": {
                               background: "#334155",
                             },
                           }}
                         >
-                          {/* {isLoading ? "Login..." : "Login"} */}
-                          Sign Up
+                          {isLoading ? (
+                            <DotLoader color="#fff" size={12} />
+                          ) : (
+                            "Sign Up"
+                          )}
                         </Button>
                       </Box>
                       <Button
