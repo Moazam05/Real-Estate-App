@@ -1,10 +1,12 @@
 // React Imports
 import { useNavigate } from "react-router-dom";
 // Material UI Imports
-import { Box } from "@mui/material";
+import { Box, Avatar, Tooltip } from "@mui/material";
 // Component Imports
 import { Heading } from "../Heading";
 import SearchBar from "../SearchBar";
+import useTypedSelector from "../../hooks/useTypedSelector";
+import { selectedUserAvatar } from "../../redux/auth/authSlice";
 
 const menuStyle = {
   cursor: "pointer",
@@ -15,6 +17,7 @@ const menuStyle = {
 
 const Header = () => {
   const navigate = useNavigate();
+  const avatar = useTypedSelector(selectedUserAvatar);
 
   return (
     <header>
@@ -58,14 +61,28 @@ const Header = () => {
           >
             About
           </Box>
-          <Box
-            sx={menuStyle}
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Log in
-          </Box>
+          {avatar ? (
+            <Box sx={{ cursor: "pointer" }}>
+              <Tooltip title="Profile">
+                <Avatar
+                  alt="User Avatar"
+                  src={avatar}
+                  onClick={() => {
+                    navigate("/profile");
+                  }}
+                />
+              </Tooltip>
+            </Box>
+          ) : (
+            <Box
+              sx={menuStyle}
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Log in
+            </Box>
+          )}
         </Box>
       </Box>
     </header>

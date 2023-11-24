@@ -6,17 +6,41 @@ import SignUp from "./views/SignUp";
 import Profile from "./views/Profile";
 import About from "./views/About";
 import Header from "./components/Header";
+import PublicRoutes from "./routes/PublicRoutes";
+import ProtectedRoutes from "./routes/ProtectedRoutes";
 
 function App() {
   return (
     <Router>
       <Header />
       <Routes>
+        <Route
+          path="/signup"
+          element={
+            <PublicRoutes>
+              <SignUp />
+            </PublicRoutes>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoutes>
+              <Login />
+            </PublicRoutes>
+          }
+        />
         <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
         <Route path="/about" element={<About />} />
+        {/* Protected Routes */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoutes>
+              <Profile />
+            </ProtectedRoutes>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
