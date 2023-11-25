@@ -125,8 +125,6 @@ const Profile = () => {
     setToast({ ...toast, appearence: false });
   };
 
-  console.log(formData.avatar);
-
   const ProfileHandler = async (data: ISProfileForm) => {};
 
   return (
