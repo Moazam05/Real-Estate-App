@@ -46,16 +46,49 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password", 400));
   }
 
-  // 2) Check if user exists && password is exist
-  const user = await User.findOne({ email }).select("+password");
-  const correct = await user.correctPassword(password, user.password);
+  // 2) Check if user exists
+  const user = await User.findOne({ email });
+  if (!user) return next(new AppError("User not found", 404));
 
-  if (!user || !correct) {
-    return next(new AppError("Incorrect email or password", 401));
+  // 3) Check if password is correct
+  const correct = await user.correctPassword(password, user.password);
+  if (!correct) {
+    return next(new AppError("Incorrect password", 401));
   }
 
-  // 3) If everything ok, send token to client
+  // 4) If everything ok, send token to client
   createSendToken(user, 200, res);
+});
+
+exports.update = catchAsync(async (req, res, next) => {
+  const { username, email, password, avatar } = req.body;
+
+  // 1) Check if user exists
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+
+  // 2) hash password
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  // 3) Update user
+  const newUser = await User.findByIdAndUpdate(
+    req.params.id,
+    {
+      username,
+      email,
+      password: hashedPassword,
+      avatar,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  // 4) If everything ok, send token to client
+  createSendToken(newUser, 200, res);
 });
 
 exports.google = catchAsync(async (req, res, next) => {

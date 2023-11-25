@@ -1,12 +1,33 @@
 // React Imports
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 // Material UI Imports
-import { Box, Avatar, Tooltip, Grid } from "@mui/material";
+import {
+  Box,
+  Avatar,
+  Grid,
+  IconButton,
+  MenuItem,
+  Menu,
+  styled,
+  MenuProps,
+  Tooltip,
+} from "@mui/material";
 // Component Imports
 import { Heading } from "../Heading";
 import SearchBar from "../SearchBar";
+// Hooks Imports
 import useTypedSelector from "../../hooks/useTypedSelector";
-import { selectedUserAvatar } from "../../redux/auth/authSlice";
+// Redux Imports
+import {
+  selectedUserAvatar,
+  selectedUserName,
+  setUser,
+} from "../../redux/auth/authSlice";
+// Icons Imports
+import { ImProfile } from "react-icons/im";
+import { IoLogOutOutline } from "react-icons/io5";
 
 const menuStyle = {
   cursor: "pointer",
@@ -15,9 +36,45 @@ const menuStyle = {
   },
 };
 
+const StyledMenu = styled((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: "right",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: "right",
+    }}
+    {...props}
+  />
+))(() => ({
+  "& .MuiPaper-root": {
+    borderRadius: 12,
+    width: 250,
+    background: "#fff",
+    color: "#334155",
+    boxShadow:
+      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+    "& .MuiMenu-list": {
+      padding: "10px 5px",
+    },
+    "& .MuiMenuItem-root": {
+      "& .MuiSvgIcon-root": {
+        fontSize: 18,
+      },
+    },
+  },
+}));
+
 const Header = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const avatar = useTypedSelector(selectedUserAvatar);
+  const userName = useTypedSelector(selectedUserName);
+
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
   return (
     <header>
@@ -89,15 +146,100 @@ const Header = () => {
                     Create Listing
                   </Box>
                   <Box sx={{ cursor: "pointer" }}>
-                    <Tooltip title="Profile">
-                      <Avatar
-                        alt="User Avatar"
-                        src={avatar}
-                        onClick={() => {
-                          navigate("/profile");
+                    <IconButton
+                      onClick={(e) => setAnchorEl(e.currentTarget)}
+                      color="inherit"
+                    >
+                      <Avatar alt="User Avatar" src={avatar} />
+                    </IconButton>
+                    <StyledMenu
+                      onClick={() => setAnchorEl(null)}
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                    >
+                      <MenuItem
+                        sx={{
+                          "&:hover": {
+                            background: "unset",
+                            cursor: "unset",
+                          },
                         }}
-                      />
-                    </Tooltip>
+                      >
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <img
+                            height={30}
+                            width={30}
+                            src={avatar}
+                            alt="user"
+                            style={{ borderRadius: "50%" }}
+                          />
+                          <Box>{userName}</Box>
+                        </Box>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{
+                          "&:hover": {
+                            background: "unset",
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            gap: "3px",
+                            marginTop: "5px",
+                          }}
+                        >
+                          <Tooltip title="See Profile" placement="bottom">
+                            <Box
+                              sx={{
+                                background: "#eff1f7",
+                                borderTopLeftRadius: "12px",
+                                borderBottomLeftRadius: "12px",
+                                width: "100%",
+                                padding: "5px 10px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                              onClick={() => {
+                                navigate("/profile");
+                              }}
+                            >
+                              <ImProfile />
+                              Profile
+                            </Box>
+                          </Tooltip>
+                          <Tooltip title="Logout Profile" placement="bottom">
+                            <Box
+                              sx={{
+                                background: "#eff1f7",
+                                borderTopRightRadius: "12px",
+                                borderBottomRightRadius: "12px",
+                                width: "100%",
+                                padding: "5px 10px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                              }}
+                              onClick={() => {
+                                dispatch(setUser(null));
+                                localStorage.removeItem("user");
+                                setAnchorEl(null);
+                                navigate("/");
+                              }}
+                            >
+                              <IoLogOutOutline /> Logout
+                            </Box>
+                          </Tooltip>
+                        </Box>
+                      </MenuItem>
+                    </StyledMenu>
                   </Box>
                 </>
               ) : (

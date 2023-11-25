@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Box, Grid, Button, Tooltip } from "@mui/material";
 // React Icons
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
-import { IoLogOutOutline } from "react-icons/io5";
 // Formik Imports
 import { Form, Formik, FormikProps } from "formik";
 import { Heading, SubHeading } from "../../components/Heading";
@@ -20,6 +19,7 @@ import {
   selectedUserName,
   selectedUserEmail,
   setUser,
+  selectedUserId,
 } from "../../redux/auth/authSlice";
 import { useDispatch } from "react-redux";
 import {
@@ -30,6 +30,8 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
+import { useUpdateMutation } from "../../redux/api/authApiSlice";
+import DotLoader from "../../components/Spinner/dotLoader";
 
 interface ISProfileForm {
   userName: string;
@@ -51,6 +53,7 @@ const Profile = () => {
   const userName = useTypedSelector(selectedUserName);
   const userEmail = useTypedSelector(selectedUserEmail);
   const userAvatar = useTypedSelector(selectedUserAvatar);
+  const userId = useTypedSelector(selectedUserId);
 
   // states
   const [file, setFile] = useState<File | null>(null);
@@ -114,6 +117,12 @@ const Profile = () => {
     } catch (error) {
       // Handle any errors in the try block
       console.error("File Upload Error", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
     }
   };
 
@@ -125,7 +134,45 @@ const Profile = () => {
     setToast({ ...toast, appearence: false });
   };
 
-  const ProfileHandler = async (data: ISProfileForm) => {};
+  // Update Profile API bind
+  const [updateProfile, { isLoading }] = useUpdateMutation();
+
+  const ProfileHandler = async (data: ISProfileForm) => {
+    const payload = {
+      userName: data.userName,
+      email: data.email,
+      password: data.password,
+      avatar: formData.avatar,
+    };
+
+    try {
+      const user: any = await updateProfile({
+        id: userId,
+        payload,
+      });
+      if (user?.data?.status) {
+        dispatch(setUser(user?.data));
+        localStorage.setItem("user", JSON.stringify(user?.data));
+        navigate("/");
+      }
+      if (user?.error) {
+        setToast({
+          ...toast,
+          message: user?.error?.data?.message,
+          appearence: true,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Profile Upload Error:", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
+    }
+  };
 
   return (
     <Box sx={{ margin: "50px 0 0 0" }}>
@@ -285,7 +332,7 @@ const Profile = () => {
                           type="submit"
                           variant="contained"
                           fullWidth
-                          // disabled={isLoading}
+                          disabled={isLoading}
                           sx={{
                             padding: "5px 30px",
                             textTransform: "capitalize",
@@ -299,33 +346,11 @@ const Profile = () => {
                             },
                           }}
                         >
-                          {/* {isLoading ? (
+                          {isLoading ? (
                             <DotLoader color="#fff" size={12} />
                           ) : (
-                            "Sign Up"
-                          )} */}
-                          Update
-                        </Button>
-                      </Box>
-                      <Box sx={{ display: "flex", justifyContent: "end" }}>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          sx={{
-                            padding: "5px 20px",
-                            textTransform: "capitalize",
-                            cursor: "pointer",
-                          }}
-                          startIcon={
-                            <IoLogOutOutline style={{ fontSize: "18px" }} />
-                          }
-                          onClick={() => {
-                            dispatch(setUser(null));
-                            localStorage.removeItem("user");
-                            navigate("/");
-                          }}
-                        >
-                          Sign Out
+                            "Update"
+                          )}
                         </Button>
                       </Box>
                     </Form>

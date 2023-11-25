@@ -30,6 +30,15 @@ export const authApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    update: builder.mutation({
+      query: (data) => {
+        return {
+          url: `users/update/${data.id}`,
+          method: "PUT",
+          body: data,
+        };
+      },
+    }),
     googleLogin: builder.mutation({
       query: (data) => {
         return {
@@ -47,5 +56,9 @@ export const authApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useSignupMutation, useLoginMutation, useGoogleLoginMutation } =
-  authApiSlice;
+export const {
+  useSignupMutation,
+  useLoginMutation,
+  useUpdateMutation,
+  useGoogleLoginMutation,
+} = authApiSlice;

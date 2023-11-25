@@ -8,6 +8,8 @@ const router = express.Router();
 // AUTH CONTROLLER
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
+router.put("/update/:id", authController.update);
+
 // GOOGLE
 router.post("/google", authController.google);
 
