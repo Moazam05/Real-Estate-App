@@ -61,7 +61,7 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.update = catchAsync(async (req, res, next) => {
-  const { username, email, password, avatar } = req.body;
+  const { username, email, password, avatar } = req.body.payload;
 
   // 1) Check if user exists
   const user = await User.findById(req.params.id);

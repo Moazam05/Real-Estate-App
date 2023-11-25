@@ -1,6 +1,5 @@
 // React Imports
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 // MUI Imports
 import { Box, Grid, Button, Tooltip } from "@mui/material";
 // React Icons
@@ -47,7 +46,6 @@ interface ISProfileForm {
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement | null | any>(null);
 
   const userName = useTypedSelector(selectedUserName);
@@ -139,10 +137,10 @@ const Profile = () => {
 
   const ProfileHandler = async (data: ISProfileForm) => {
     const payload = {
-      userName: data.userName,
+      username: data.userName,
       email: data.email,
       password: data.password,
-      avatar: formData.avatar,
+      avatar: formData.avatar || userAvatar,
     };
 
     try {
@@ -151,9 +149,14 @@ const Profile = () => {
         payload,
       });
       if (user?.data?.status) {
+        setToast({
+          ...toast,
+          message: "User Updated Successfully",
+          appearence: true,
+          type: "success",
+        });
         dispatch(setUser(user?.data));
         localStorage.setItem("user", JSON.stringify(user?.data));
-        navigate("/");
       }
       if (user?.error) {
         setToast({
