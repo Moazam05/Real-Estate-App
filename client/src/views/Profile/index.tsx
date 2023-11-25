@@ -1,5 +1,5 @@
 // React Imports
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 // MUI Imports
 import { Box, Grid, Button, Tooltip } from "@mui/material";
@@ -22,12 +22,26 @@ import {
   setUser,
 } from "../../redux/auth/authSlice";
 import { useDispatch } from "react-redux";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  UploadTask,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
 
 interface ISProfileForm {
   userName: string;
   email: string;
   password: string;
 }
+
+// Firebase Storage
+// allow read;
+// allow write: if
+// request.resource.size < 2 * 1024 * 1024 &&
+// request.resource.contentType.matches('image/.*')
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -39,6 +53,10 @@ const Profile = () => {
   const userAvatar = useTypedSelector(selectedUserAvatar);
 
   // states
+  const [file, setFile] = useState<File | null>(null);
+  const [fileUploadError, setFileUploadError] = useState(false);
+  const [formData, setFormData] = useState<any>({});
+  const [filePercentage, setFilePercentage] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formValues, setFormValues] = useState<ISProfileForm>({
@@ -46,12 +64,58 @@ const Profile = () => {
     email: userEmail,
     password: "",
   });
-
   const [toast, setToast] = useState({
     message: "",
     appearence: false,
     type: "",
   });
+
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [file]);
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + file.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask: UploadTask = uploadBytesResumable(storageRef, file);
+
+      // Attach event handlers using the task method
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // progress function
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          setFilePercentage(progress);
+        },
+        (error) => {
+          // Error function
+          console.error(error);
+          setFileUploadError(true);
+        },
+        async () => {
+          // complete function
+          try {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setFormData({ ...formData, avatar: downloadURL });
+            setFile(null);
+          } catch (error) {
+            // Handle any errors during getDownloadURL
+            console.error(error);
+          }
+        }
+      );
+    } catch (error) {
+      // Handle any errors in the try block
+      console.error("File Upload Error", error);
+    }
+  };
 
   const hideShowPassword = () => {
     setShowPassword(!showPassword);
@@ -60,6 +124,8 @@ const Profile = () => {
   const handleCloseToast = () => {
     setToast({ ...toast, appearence: false });
   };
+
+  console.log(formData.avatar);
 
   const ProfileHandler = async (data: ISProfileForm) => {};
 
@@ -77,13 +143,18 @@ const Profile = () => {
             }}
           >
             <Heading sx={{ fontSize: "30px" }}>Profile</Heading>
-            <Tooltip title="Upload Image">
+            <Tooltip title="Upload Image" placement="right">
               <Box sx={{ marginTop: "30px", cursor: "pointer" }}>
                 <input
+                  onChange={(e) => {
+                    if (e.target.files) {
+                      setFile(e.target.files[0]);
+                    }
+                  }}
                   hidden
                   ref={fileRef}
                   type="file"
-                  accept="*image"
+                  accept="image/*"
                   name=""
                   id=""
                 />
@@ -91,11 +162,33 @@ const Profile = () => {
                   onClick={() => fileRef.current.click()}
                   height={95}
                   width={95}
-                  src={userAvatar}
+                  src={formData.avatar || userAvatar}
                   alt="user"
+                  style={{ borderRadius: "50%" }}
                 />
               </Box>
             </Tooltip>
+            <Box sx={{ marginTop: "7px" }}>
+              {fileUploadError ? (
+                <Box sx={{ color: "#d32f2f", fontWeight: 400 }}>
+                  File Upload Error
+                  <span style={{ marginLeft: "3px" }}>
+                    (Image be less than 2Mb)
+                  </span>
+                </Box>
+              ) : filePercentage > 0 && filePercentage < 100 ? (
+                <Box
+                  sx={{ color: "#334155", fontweight: 400 }}
+                >{`Uploading ${filePercentage}%`}</Box>
+              ) : filePercentage === 100 ? (
+                <Box sx={{ color: "#1db45a", fontWeight: 500 }}>
+                  Image Successfully Uploaded!
+                </Box>
+              ) : (
+                ""
+              )}
+            </Box>
+
             <Box sx={{ width: "100%" }}>
               <Formik
                 initialValues={formValues}
@@ -221,13 +314,13 @@ const Profile = () => {
                           variant="outlined"
                           color="error"
                           sx={{
-                            padding: "5px 30px",
+                            padding: "5px 20px",
                             textTransform: "capitalize",
-                            height: "35px",
-                            lineHeight: "0",
                             cursor: "pointer",
                           }}
-                          startIcon={<IoLogOutOutline />}
+                          startIcon={
+                            <IoLogOutOutline style={{ fontSize: "18px" }} />
+                          }
                           onClick={() => {
                             dispatch(setUser(null));
                             localStorage.removeItem("user");
