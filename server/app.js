@@ -8,6 +8,7 @@ const path = require("path");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
+const listingRouter = require("./routes/listingRoutes");
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 
 // ROUTES
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/listings", listingRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
