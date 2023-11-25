@@ -91,6 +91,22 @@ exports.update = catchAsync(async (req, res, next) => {
   createSendToken(newUser, 200, res);
 });
 
+exports.delete = catchAsync(async (req, res, next) => {
+  // 1) Find User
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+  // 2) Delete User
+  await User.findByIdAndDelete(req.params.id);
+
+  // 3) If everything ok, send token to client
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
 exports.google = catchAsync(async (req, res, next) => {
   const { name, email, photo } = req.body;
 

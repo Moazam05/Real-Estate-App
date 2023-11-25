@@ -140,7 +140,7 @@ const Header = () => {
                   <Box
                     sx={menuStyle}
                     onClick={() => {
-                      navigate("/about");
+                      navigate("/create-listing");
                     }}
                   >
                     Create Listing

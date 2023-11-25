@@ -8,6 +8,7 @@ import About from "./views/About";
 import Header from "./components/Header";
 import PublicRoutes from "./routes/PublicRoutes";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
+import CreateListing from "./views/Listing";
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
           element={
             <ProtectedRoutes>
               <Profile />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/create-listing"
+          element={
+            <ProtectedRoutes>
+              <CreateListing />
             </ProtectedRoutes>
           }
         />

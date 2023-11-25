@@ -1,5 +1,6 @@
 // React Imports
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 // MUI Imports
 import { Box, Grid, Button, Tooltip } from "@mui/material";
 // React Icons
@@ -10,7 +11,6 @@ import { Heading, SubHeading } from "../../components/Heading";
 import { signUpSchema } from "../SignUp/components/validationSchema";
 import { onKeyDown } from "../../utils";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
-// import DotLoader from "../../components/Spinner/dotLoader";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import useTypedSelector from "../../hooks/useTypedSelector";
 import {
@@ -29,8 +29,12 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
-import { useUpdateMutation } from "../../redux/api/authApiSlice";
+import {
+  useDeleteMutation,
+  useUpdateMutation,
+} from "../../redux/api/userApiSlice";
 import DotLoader from "../../components/Spinner/dotLoader";
+import { MdOutlineDeleteSweep } from "react-icons/md";
 
 interface ISProfileForm {
   userName: string;
@@ -45,6 +49,7 @@ interface ISProfileForm {
 // request.resource.contentType.matches('image/.*')
 
 const Profile = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const fileRef = useRef<HTMLInputElement | null | any>(null);
 
@@ -157,6 +162,7 @@ const Profile = () => {
         });
         dispatch(setUser(user?.data));
         localStorage.setItem("user", JSON.stringify(user?.data));
+        navigate("/");
       }
       if (user?.error) {
         setToast({
@@ -168,6 +174,42 @@ const Profile = () => {
       }
     } catch (error) {
       console.error("Profile Upload Error:", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
+    }
+  };
+
+  // Delete Account API bind
+  const [deleteAccount, { isLoading: deleteLoading }] = useDeleteMutation();
+
+  const deleteHandler = async () => {
+    try {
+      const user: any = await deleteAccount(userId);
+      if (user?.data === null) {
+        setToast({
+          ...toast,
+          message: "Account Deleted Successfully",
+          appearence: true,
+          type: "success",
+        });
+        dispatch(setUser(null));
+        localStorage.removeItem("user");
+        navigate("/login");
+      }
+      if (user?.error) {
+        setToast({
+          ...toast,
+          message: user?.error?.data?.message,
+          appearence: true,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Delete Account Error:", error);
       setToast({
         ...toast,
         message: "Something went wrong",
@@ -354,6 +396,20 @@ const Profile = () => {
                           ) : (
                             "Update"
                           )}
+                        </Button>
+                      </Box>
+                      <Box sx={{ display: "flex", justifyContent: "end" }}>
+                        <Button
+                          sx={{
+                            textTransform: "capitalize",
+                          }}
+                          variant="outlined"
+                          color="error"
+                          disabled={deleteLoading}
+                          startIcon={<MdOutlineDeleteSweep />}
+                          onClick={deleteHandler}
+                        >
+                          Delete Account
                         </Button>
                       </Box>
                     </Form>
