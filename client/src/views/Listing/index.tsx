@@ -16,6 +16,15 @@ import { Heading, SubHeading } from "../../components/Heading";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
 import { onKeyDown } from "../../utils";
 import { listingSchema } from "./components/validationSchema";
+import {
+  UploadTask,
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
+import DotLoader from "../../components/Spinner/dotLoader";
 
 interface listingForm {
   name: string;
@@ -29,7 +38,7 @@ interface listingForm {
   parking: boolean;
   type: string;
   offer: boolean;
-  imageUrls: string[];
+  files: null | any[];
 }
 
 const CreateListing = () => {
@@ -46,8 +55,71 @@ const CreateListing = () => {
     parking: false,
     offer: false,
     type: "Rent",
-    imageUrls: [],
+    files: [],
   });
+  const [listingImages, setListingImages] = useState<any[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageError, setImageError] = useState<boolean | string>(false);
+  const [imageLoading, setImageLoading] = useState<boolean>(false);
+
+  const UploadHandler = () => {
+    // if (imageUrls.length < 3) {
+    if (listingImages.length === 0)
+      return setImageError("Please select an image");
+    // }
+
+    if (listingImages.length + imageUrls.length < 7) {
+      setImageLoading(true);
+      const promises = [];
+      for (let i = 0; i < listingImages.length; i++) {
+        promises.push(UploadImage(listingImages[i]));
+      }
+
+      Promise.all(promises)
+        .then((urls: any) => {
+          // add more urls to previous ones
+          setImageUrls([...imageUrls, ...urls]);
+          setImageError(false);
+          setImageLoading(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setImageError("Image Upload Failed (2 mb max per image)");
+          setImageLoading(false);
+        });
+    } else {
+      setImageError("You can upload only 6 images per listing");
+    }
+  };
+
+  const UploadImage = async (image: any) => {
+    return new Promise((resolve, reject) => {
+      const storage = getStorage(app);
+      const fileName = new Date().getTime() + image.name;
+      const storageRef = ref(storage, fileName);
+      const uploadTask: UploadTask = uploadBytesResumable(storageRef, image);
+
+      // Attach event handlers using the task method
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // progress function
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          console.log(progress);
+        },
+        (error) => {
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
 
   const listingHandler = async (data: listingForm) => {
     console.log("payload", data);
@@ -76,8 +148,14 @@ const CreateListing = () => {
               validationSchema={listingSchema}
             >
               {(props: FormikProps<listingForm>) => {
-                const { values, touched, errors, handleBlur, handleChange } =
-                  props;
+                const {
+                  values,
+                  touched,
+                  errors,
+                  handleBlur,
+                  handleChange,
+                  setFieldValue,
+                } = props;
 
                 return (
                   <Form onKeyDown={onKeyDown} style={{ width: "100%" }}>
@@ -351,10 +429,145 @@ const CreateListing = () => {
                       </Grid>
                       <Grid item xs={6}>
                         <Box sx={{ marginTop: "25px" }}>
+                          <SubHeading sx={{ marginBottom: "10px" }}>
+                            Images :
+                            <span
+                              style={{
+                                marginLeft: "5px",
+                                color: "#4b5563",
+                                fontWeight: "normal",
+                              }}
+                            >
+                              The first image will be the cover (max 6)
+                            </span>
+                          </SubHeading>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: 2,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                border: "1px solid #ccc",
+                                padding: "10px",
+                                borderRadius: "5px",
+                                width: "100%",
+                              }}
+                            >
+                              <input
+                                type="file"
+                                name="files"
+                                onChange={(event) => {
+                                  const fileList: any =
+                                    event.currentTarget.files;
+                                  const fileArray = Array.from(fileList);
+                                  setFieldValue("files", fileArray);
+                                  setListingImages(fileArray);
+                                  if (imageUrls.length < 3) {
+                                    if (fileArray.length === 0) {
+                                      setImageError("Please select an image");
+                                    } else {
+                                      setImageError("");
+                                    }
+                                  }
+                                }}
+                                multiple
+                                accept="image/*"
+                              />
+                            </Box>
+                            <Button
+                              variant="outlined"
+                              color="success"
+                              sx={{
+                                textTransform: "capitalize",
+                                width: "100px",
+                                lineHeight: "0",
+                                height: "40px",
+                              }}
+                              onClick={UploadHandler}
+                              disabled={imageLoading}
+                            >
+                              {imageLoading ? (
+                                <DotLoader color="#334155" size={12} />
+                              ) : (
+                                "Upload"
+                              )}
+                            </Button>
+                          </Box>
+                          {touched.files && errors.files && (
+                            <Box
+                              sx={{
+                                fontSize: "12px",
+                                color: "#d32f2f",
+                                marginTop: "5px",
+                              }}
+                            >
+                              {errors.files}
+                            </Box>
+                          )}
+                          <Box
+                            sx={{
+                              fontSize: "12px",
+                              color: "#d32f2f",
+                              marginTop: "5px",
+                            }}
+                          >
+                            {imageError}
+                          </Box>
+                          {imageUrls.length > 0 &&
+                            imageUrls.map((url) => (
+                              <Box
+                                sx={{
+                                  margin: "15px 0",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  border: "1px solid #ccc",
+                                  padding: "10px",
+                                  borderRadius: "5px",
+                                }}
+                                key={url}
+                              >
+                                <Box>
+                                  <img
+                                    src={url}
+                                    alt="listing"
+                                    style={{
+                                      width: "100%",
+                                      height: "100px",
+                                      objectFit: "cover",
+                                    }}
+                                  />
+                                </Box>
+                                <Button
+                                  variant="outlined"
+                                  color="error"
+                                  sx={{
+                                    textTransform: "capitalize",
+                                    border: "none",
+                                    "&:hover": {
+                                      border: "none",
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    const newUrls = imageUrls.filter(
+                                      (imageUrl) => imageUrl !== url
+                                    );
+                                    setImageUrls(newUrls);
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </Box>
+                            ))}
                           <Box
                             sx={{
                               display: "flex",
                               justifyContent: "end",
+                              marginTop: "20px",
                             }}
                           >
                             <Button
