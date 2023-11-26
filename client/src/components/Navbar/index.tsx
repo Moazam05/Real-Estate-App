@@ -1,6 +1,6 @@
 // React Imports
 import React, { ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 // MUI Imports
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -100,7 +100,6 @@ interface DashboardProps {
 }
 
 export default function Navbar({ children }: DashboardProps) {
-  const navigate = useNavigate();
   const location = useLocation();
 
   const theme = useTheme();

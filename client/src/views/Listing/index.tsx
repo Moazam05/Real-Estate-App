@@ -1,5 +1,6 @@
 // React Imports
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 import { Form, Formik, FormikProps } from "formik";
 // MUI Imports
@@ -25,6 +26,10 @@ import {
 } from "firebase/storage";
 import { app } from "../../firebase";
 import DotLoader from "../../components/Spinner/dotLoader";
+import { useCreateListingMutation } from "../../redux/api/listingApiSlice";
+import ToastAlert from "../../components/ToastAlert/ToastAlert";
+import { selectedUserId } from "../../redux/auth/authSlice";
+import useTypedSelector from "../../hooks/useTypedSelector";
 
 interface listingForm {
   name: string;
@@ -42,6 +47,8 @@ interface listingForm {
 }
 
 const CreateListing = () => {
+  const navigate = useNavigate();
+  const userId = useTypedSelector(selectedUserId);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formValues, setFormValues] = useState<listingForm>({
     name: "",
@@ -61,6 +68,15 @@ const CreateListing = () => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [imageError, setImageError] = useState<boolean | string>(false);
   const [imageLoading, setImageLoading] = useState<boolean>(false);
+  const [toast, setToast] = useState({
+    message: "",
+    appearence: false,
+    type: "",
+  });
+
+  const handleCloseToast = () => {
+    setToast({ ...toast, appearence: false });
+  };
 
   const UploadHandler = () => {
     // if (imageUrls.length < 3) {
@@ -121,8 +137,58 @@ const CreateListing = () => {
     });
   };
 
+  // Create Listing API bind
+  const [createListing, { isLoading }] = useCreateListingMutation();
+
   const listingHandler = async (data: listingForm) => {
-    console.log("payload", data);
+    const payload = {
+      name: data.name,
+      description: data.description,
+      address: data.address,
+      regularPrice: data.regularPrice,
+      discountedPrice: data.discountedPrice,
+      bathrooms: data.bathrooms,
+      bedrooms: data.bedrooms,
+      furnished: data.furnished,
+      parking: data.parking,
+      type: data.type,
+      offer: data.offer,
+      imageUrls,
+      user: userId,
+    };
+    try {
+      if (imageUrls.length < 3)
+        return setImageError("Please upload at least 2 image");
+
+      const listing: any = await createListing(payload);
+      if (listing?.data?.status) {
+        setToast({
+          ...toast,
+          message: "Listing Created Successfully",
+          appearence: true,
+          type: "success",
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }
+      if (listing?.error) {
+        setToast({
+          ...toast,
+          message: listing?.error?.data?.message,
+          appearence: true,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Create Listing Error:", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -214,7 +280,9 @@ const CreateListing = () => {
                           sx={{
                             height: "85px",
                             marginTop:
-                              errors.address && touched.address ? "0" : "15px",
+                              errors.description && touched.description
+                                ? "0"
+                                : "15px",
                           }}
                         >
                           <SubHeading sx={{ marginBottom: "5px" }}>
@@ -574,7 +642,7 @@ const CreateListing = () => {
                               type="submit"
                               variant="contained"
                               fullWidth
-                              // disabled={isLoading}
+                              disabled={isLoading}
                               sx={{
                                 padding: "5px 30px",
                                 textTransform: "capitalize",
@@ -588,12 +656,11 @@ const CreateListing = () => {
                                 },
                               }}
                             >
-                              {/* {isLoading ? (
-                          <DotLoader color="#fff" size={12} />
-                        ) : (
-                          "Update"
-                        )} */}
-                              Create Listing
+                              {isLoading ? (
+                                <DotLoader color="#fff" size={12} />
+                              ) : (
+                                "Create Listing"
+                              )}
                             </Button>
                           </Box>
                         </Box>
@@ -607,6 +674,12 @@ const CreateListing = () => {
         </Grid>
         <Grid item xs={2}></Grid>
       </Grid>
+      <ToastAlert
+        appearence={toast.appearence}
+        type={toast.type}
+        message={toast.message}
+        handleClose={handleCloseToast}
+      />
     </Box>
   );
 };

@@ -30,5 +30,7 @@ export const listingSchema = Yup.object().shape({
   parking: Yup.boolean().required("Parking is required").nullable(),
   type: Yup.string().required("Type is required").nullable(),
   offer: Yup.boolean().required("Offer is required").nullable(),
-  files: Yup.array().max(6, "Listing image is required"),
+  files: Yup.array()
+    .min(2, "At least 2 image is required")
+    .max(6, "Maximum 6 images allowed"),
 });
