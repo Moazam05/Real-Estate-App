@@ -11,7 +11,15 @@ export const listingApiSlice = apiSlice.injectEndpoints({
         };
       },
     }),
+    getListing: builder.query({
+      query: (userId) => {
+        return {
+          url: `listings/${userId}`,
+          method: "GET",
+        };
+      },
+    }),
   }),
 });
 
-export const { useCreateListingMutation } = listingApiSlice;
+export const { useCreateListingMutation, useGetListingQuery } = listingApiSlice;

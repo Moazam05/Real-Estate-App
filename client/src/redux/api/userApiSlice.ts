@@ -13,7 +13,6 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
     delete: builder.mutation({
       query: (data) => {
-        console.log("data", data);
         return {
           url: `users/delete/${data}`,
           method: "DELETE",

@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import PublicRoutes from "./routes/PublicRoutes";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import CreateListing from "./views/Listing";
+import AllListings from "./views/Listing/components/allListings";
 
 function App() {
   return (
@@ -47,6 +48,14 @@ function App() {
           element={
             <ProtectedRoutes>
               <CreateListing />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/listings"
+          element={
+            <ProtectedRoutes>
+              <AllListings />
             </ProtectedRoutes>
           }
         />

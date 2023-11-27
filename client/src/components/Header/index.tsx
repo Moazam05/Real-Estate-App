@@ -140,6 +140,14 @@ const Header = () => {
                   <Box
                     sx={menuStyle}
                     onClick={() => {
+                      navigate("/listings");
+                    }}
+                  >
+                    Listings
+                  </Box>
+                  <Box
+                    sx={menuStyle}
+                    onClick={() => {
                       navigate("/create-listing");
                     }}
                   >
