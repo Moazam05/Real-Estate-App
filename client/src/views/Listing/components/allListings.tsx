@@ -165,6 +165,9 @@ const AllListings = () => {
                         color="success"
                         sx={{ textTransform: "capitalize" }}
                         startIcon={<CiEdit />}
+                        onClick={() => {
+                          navigate(`/listings/${item?._id}`);
+                        }}
                       >
                         Edit
                       </Button>

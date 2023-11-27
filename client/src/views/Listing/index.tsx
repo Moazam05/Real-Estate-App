@@ -1,6 +1,6 @@
 // React Imports
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 import { Form, Formik, FormikProps } from "formik";
 // MUI Imports
@@ -26,10 +26,15 @@ import {
 } from "firebase/storage";
 import { app } from "../../firebase";
 import DotLoader from "../../components/Spinner/dotLoader";
-import { useCreateListingMutation } from "../../redux/api/listingApiSlice";
+import {
+  useCreateListingMutation,
+  useGetSingleListingQuery,
+  useUpdateListingMutation,
+} from "../../redux/api/listingApiSlice";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import { selectedUserId } from "../../redux/auth/authSlice";
 import useTypedSelector from "../../hooks/useTypedSelector";
+import OverlayLoader from "../../components/Spinner/OverlayLoader";
 
 interface listingForm {
   name: string;
@@ -43,11 +48,12 @@ interface listingForm {
   parking: boolean;
   type: string;
   offer: boolean;
-  files: null | any[];
+  files?: null | any[];
 }
 
 const CreateListing = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const userId = useTypedSelector(selectedUserId);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formValues, setFormValues] = useState<listingForm>({
@@ -139,6 +145,9 @@ const CreateListing = () => {
 
   // Create Listing API bind
   const [createListing, { isLoading }] = useCreateListingMutation();
+  // Update Listing API bind
+  const [updateListing, { isLoading: updatingLoading }] =
+    useUpdateListingMutation();
 
   const listingHandler = async (data: listingForm) => {
     const payload = {
@@ -160,6 +169,32 @@ const CreateListing = () => {
       if (imageUrls.length < 2)
         return setImageError("Please upload at least 2 image");
 
+      // Update Listing
+      if (id) {
+        const updatedListing: any = await updateListing({ id, payload });
+
+        if (updatedListing?.data?.status) {
+          setToast({
+            ...toast,
+            message: "Listing Updated Successfully",
+            appearence: true,
+            type: "success",
+          });
+          setTimeout(() => {
+            navigate("/listings");
+          });
+        }
+        if (updatedListing?.error) {
+          setToast({
+            ...toast,
+            message: updatedListing?.error?.data?.message,
+            appearence: true,
+            type: "error",
+          });
+        }
+        return;
+      }
+      // Create Listing
       const listing: any = await createListing(payload);
       if (listing?.data?.status) {
         setToast({
@@ -191,8 +226,35 @@ const CreateListing = () => {
     }
   };
 
+  // Get Single Listing API query
+  const {
+    data: listingData,
+    isLoading: listingLoading,
+    isSuccess: listingSuccess,
+  } = useGetSingleListingQuery(id);
+
+  useEffect(() => {
+    if (listingSuccess) {
+      setFormValues({
+        name: listingData?.data?.name,
+        description: listingData?.data?.description,
+        address: listingData?.data?.address,
+        regularPrice: listingData?.data?.regularPrice,
+        discountedPrice: listingData?.data?.discountedPrice,
+        bathrooms: listingData?.data?.bathrooms,
+        bedrooms: listingData?.data?.bedrooms,
+        furnished: listingData?.data?.furnished,
+        parking: listingData?.data?.parking,
+        type: listingData?.data?.type,
+        offer: listingData?.data?.offer,
+      });
+      setImageUrls(listingData?.data?.imageUrls);
+    }
+  }, [listingData, listingSuccess]);
+
   return (
     <Box sx={{ marginTop: "50px" }}>
+      {listingLoading && <OverlayLoader />}
       <Grid container spacing={2}>
         <Grid item xs={2}></Grid>
         <Grid item xs={8}>
@@ -203,7 +265,7 @@ const CreateListing = () => {
               alignItems: "center",
             }}
           >
-            <Heading>Create a Listing</Heading>
+            <Heading>{id ? "Update" : "Create"} a Listing</Heading>
           </Box>
           <Box sx={{ margin: "30px 0", display: "flex", gap: 2 }}>
             <Formik
@@ -212,6 +274,7 @@ const CreateListing = () => {
                 listingHandler(values);
               }}
               validationSchema={listingSchema}
+              enableReinitialize
             >
               {(props: FormikProps<listingForm>) => {
                 const {
@@ -586,7 +649,7 @@ const CreateListing = () => {
                             {imageError}
                           </Box>
                           {imageUrls.length > 0 &&
-                            imageUrls.map((url) => (
+                            imageUrls.map((url, index) => (
                               <Box
                                 sx={{
                                   margin: "15px 0",
@@ -597,7 +660,7 @@ const CreateListing = () => {
                                   padding: "10px",
                                   borderRadius: "5px",
                                 }}
-                                key={url}
+                                key={index}
                               >
                                 <Box>
                                   <img
@@ -642,7 +705,7 @@ const CreateListing = () => {
                               type="submit"
                               variant="contained"
                               fullWidth
-                              disabled={isLoading}
+                              disabled={isLoading || updatingLoading}
                               sx={{
                                 padding: "5px 30px",
                                 textTransform: "capitalize",
@@ -656,10 +719,10 @@ const CreateListing = () => {
                                 },
                               }}
                             >
-                              {isLoading ? (
+                              {isLoading || updatingLoading ? (
                                 <DotLoader color="#fff" size={12} />
                               ) : (
-                                "Create Listing"
+                                <>{id ? "Update Listing" : "Create Listing"}</>
                               )}
                             </Button>
                           </Box>

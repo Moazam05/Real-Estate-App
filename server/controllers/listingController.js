@@ -27,6 +27,23 @@ exports.getUsersListings = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getListing = catchAsync(async (req, res, next) => {
+  // 1) Find the listing
+  const listing = await Listing.findById(req.params.id);
+  console.log("req", req.params.id);
+
+  // 2) Check if the listing exists
+  if (!listing) {
+    return next(new AppError("No listing found with that ID", 404));
+  }
+
+  // 3) Send the response
+  res.status(200).json({
+    status: "success",
+    data: listing,
+  });
+});
+
 exports.deleteListing = catchAsync(async (req, res, next) => {
   // 1) Find the listing
   const listing = await Listing.findById(req.params.id);

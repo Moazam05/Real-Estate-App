@@ -59,6 +59,14 @@ function App() {
             </ProtectedRoutes>
           }
         />
+        <Route
+          path="/listings/:id"
+          element={
+            <ProtectedRoutes>
+              <CreateListing />
+            </ProtectedRoutes>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
