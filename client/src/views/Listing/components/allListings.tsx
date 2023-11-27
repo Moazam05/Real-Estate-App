@@ -1,18 +1,66 @@
+import { useState } from "react";
 import { Box, Grid, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Heading, SubHeading } from "../../../components/Heading";
-import { useGetListingQuery } from "../../../redux/api/listingApiSlice";
+import {
+  useDeleteListingMutation,
+  useGetListingQuery,
+} from "../../../redux/api/listingApiSlice";
 import { selectedUserId } from "../../../redux/auth/authSlice";
 import useTypedSelector from "../../../hooks/useTypedSelector";
 import OverlayLoader from "../../../components/Spinner/OverlayLoader";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
+import ToastAlert from "../../../components/ToastAlert/ToastAlert";
+import DotLoader from "../../../components/Spinner/dotLoader";
 
 const AllListings = () => {
   const navigate = useNavigate();
   const userId = useTypedSelector(selectedUserId);
 
+  const [toast, setToast] = useState({
+    message: "",
+    appearence: false,
+    type: "",
+  });
+
+  const handleCloseToast = () => {
+    setToast({ ...toast, appearence: false });
+  };
+
   const { data, isLoading, isSuccess } = useGetListingQuery(userId);
+
+  const [deleteListing, { isLoading: isDeleting }] = useDeleteListingMutation();
+
+  const DeleteListingHandler = async (id: string) => {
+    try {
+      const listing: any = await deleteListing(id);
+      if (listing?.data === null) {
+        setToast({
+          ...toast,
+          message: "Listing Deleted Successfully",
+          appearence: true,
+          type: "success",
+        });
+      }
+      if (listing?.error) {
+        setToast({
+          ...toast,
+          message: listing?.error?.message,
+          appearence: true,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Delete Listing Error", error);
+      setToast({
+        ...toast,
+        message: "Something went wrong",
+        appearence: true,
+        type: "error",
+      });
+    }
+  };
 
   return (
     <Box sx={{ marginTop: "50px" }}>
@@ -101,8 +149,16 @@ const AllListings = () => {
                         color="error"
                         sx={{ textTransform: "capitalize" }}
                         startIcon={<MdDeleteOutline />}
+                        disabled={isDeleting}
+                        onClick={() => {
+                          DeleteListingHandler(item?._id);
+                        }}
                       >
-                        Delete
+                        {isDeleting ? (
+                          <DotLoader color="#fff" size={12} />
+                        ) : (
+                          "Delete"
+                        )}
                       </Button>
                       <Button
                         variant="outlined"
@@ -121,6 +177,12 @@ const AllListings = () => {
         </Grid>
         <Grid item xs={3}></Grid>
       </Grid>
+      <ToastAlert
+        appearence={toast.appearence}
+        type={toast.type}
+        message={toast.message}
+        handleClose={handleCloseToast}
+      />
     </Box>
   );
 };

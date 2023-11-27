@@ -21,7 +21,20 @@ export const listingApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ["Listing"],
     }),
+    deleteListing: builder.mutation({
+      query: (listingId) => {
+        return {
+          url: `listings/${listingId}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Listing"],
+    }),
   }),
 });
 
-export const { useCreateListingMutation, useGetListingQuery } = listingApiSlice;
+export const {
+  useCreateListingMutation,
+  useGetListingQuery,
+  useDeleteListingMutation,
+} = listingApiSlice;
