@@ -1,4 +1,5 @@
 import { Box, Grid, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { Heading, SubHeading } from "../../../components/Heading";
 import { useGetListingQuery } from "../../../redux/api/listingApiSlice";
 import { selectedUserId } from "../../../redux/auth/authSlice";
@@ -8,6 +9,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 
 const AllListings = () => {
+  const navigate = useNavigate();
   const userId = useTypedSelector(selectedUserId);
 
   const { data, isLoading, isSuccess } = useGetListingQuery(userId);
@@ -30,7 +32,30 @@ const AllListings = () => {
             <Heading>Listings</Heading>
           </Box>
           {isSuccess && data?.data?.length === 0 ? (
-            "No Listings"
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                width: "100%",
+                padding: "20px 15px 20px",
+                borderRadius: "5px",
+                boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                border: "1px solid #ccc",
+                margin: "20px 0",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              No Listings to show
+              <Button
+                onClick={() => {
+                  navigate("/create-listing");
+                }}
+                sx={{ textTransform: "capitalize", margin: "10px 0 0" }}
+              >
+                Create Listing
+              </Button>
+            </Box>
           ) : (
             <>
               {data?.data?.map((item: any) => {
