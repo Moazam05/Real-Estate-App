@@ -13,3 +13,15 @@ exports.createListing = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getUsersListings = catchAsync(async (req, res, next) => {
+  // 1) Find all listings based on user id
+  const listings = await Listing.find({ user: req.params.id });
+
+  // 2) Send the response
+  res.status(200).json({
+    status: "success",
+    results: listings.length,
+    data: listings,
+  });
+});
