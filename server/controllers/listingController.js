@@ -1,5 +1,6 @@
 const catchAsync = require("../utils/catchAsync");
 const Listing = require("../models/listingModel");
+const AppError = require("../utils/appError");
 
 exports.createListing = catchAsync(async (req, res, next) => {
   // 1) Create a listing
@@ -23,5 +24,29 @@ exports.getUsersListings = catchAsync(async (req, res, next) => {
     status: "success",
     results: listings.length,
     data: listings,
+  });
+});
+
+exports.deleteListing = catchAsync(async (req, res, next) => {
+  // 1) Find the listing
+  const listing = await Listing.findById(req.params.id);
+
+  // 2) Check if the listing exists
+  if (!listing) {
+    return next(new AppError("No listing found with that ID", 404));
+  }
+
+  // 3) Check if the user owns the listing
+  if (listing.user.toString() !== req.user.id) {
+    return next(new AppError("You do not own this listing", 403));
+  }
+
+  // 4) Delete the listing
+  await Listing.findByIdAndDelete(req.params.id);
+
+  // 4) Send the response
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });

@@ -29,7 +29,7 @@ const AllListings = () => {
               gap: 2,
             }}
           >
-            <Heading>Listings</Heading>
+            <Heading>Your Listings</Heading>
           </Box>
           {isSuccess && data?.data?.length === 0 ? (
             <Box
