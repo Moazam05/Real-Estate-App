@@ -10,6 +10,7 @@ export const listingApiSlice = apiSlice.injectEndpoints({
           body: data,
         };
       },
+      invalidatesTags: ["Listing"],
     }),
     getListing: builder.query({
       query: (userId) => {
@@ -18,6 +19,7 @@ export const listingApiSlice = apiSlice.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: ["Listing"],
     }),
   }),
 });

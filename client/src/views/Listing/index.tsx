@@ -157,7 +157,7 @@ const CreateListing = () => {
       user: userId,
     };
     try {
-      if (imageUrls.length < 3)
+      if (imageUrls.length < 2)
         return setImageError("Please upload at least 2 image");
 
       const listing: any = await createListing(payload);
@@ -169,8 +169,8 @@ const CreateListing = () => {
           type: "success",
         });
         setTimeout(() => {
-          navigate("/");
-        }, 2000);
+          navigate("/listings");
+        });
       }
       if (listing?.error) {
         setToast({
