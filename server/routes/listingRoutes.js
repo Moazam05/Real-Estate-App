@@ -8,5 +8,6 @@ const router = express.Router();
 router.post("/", authController.protect, listingController.createListing);
 router.get("/:id", authController.protect, listingController.getUsersListings);
 router.delete("/:id", authController.protect, listingController.deleteListing);
+router.put("/:id", authController.protect, listingController.updateListing);
 
 module.exports = router;

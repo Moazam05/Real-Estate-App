@@ -50,3 +50,36 @@ exports.deleteListing = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+exports.updateListing = catchAsync(async (req, res, next) => {
+  // 1) Find the listing
+  const listing = await Listing.findById(req.params.id);
+
+  // 2) Check if the listing exists
+  if (!listing) {
+    return next(new AppError("No listing found with that ID", 404));
+  }
+
+  // 3) Check if the user owns the listing
+  if (listing.user.toString() !== req.user.id) {
+    return next(new AppError("You do not own this listing", 403));
+  }
+
+  // 4) Update the listing
+  const updatedListing = await Listing.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  // 5) Send the response
+  res.status(200).json({
+    status: "success",
+    data: {
+      listing: updatedListing,
+    },
+  });
+});
