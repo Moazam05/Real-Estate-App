@@ -87,7 +87,7 @@ const ViewListing = () => {
               >
                 <Box
                   sx={{
-                    background: "#7f1d1d",
+                    background: "#7b4c22",
                     color: "#fff",
                     borderRadius: "5px",
                     padding: "5px 10px",
@@ -95,6 +95,7 @@ const ViewListing = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    fontWeight: "bold",
                   }}
                 >
                   {data?.data?.type}

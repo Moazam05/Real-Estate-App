@@ -127,7 +127,7 @@ const AllListings = () => {
                         <img
                           src={item?.imageUrls[0]}
                           width={100}
-                          height={132}
+                          height={127}
                           alt="listing"
                           style={{ borderRadius: "5px" }}
                         />
@@ -138,9 +138,10 @@ const AllListings = () => {
                             display: "flex",
                             alignItems: "center",
                             gap: 2,
+                            height: "110px",
                           }}
                         >
-                          <Box>
+                          <Box sx={{ width: "100%" }}>
                             <Box
                               sx={{
                                 fontSize: "18px",
@@ -160,7 +161,6 @@ const AllListings = () => {
                             <Box
                               sx={{
                                 color: "#1e293b",
-                                height: "60px",
                                 marginTop: "8px",
                               }}
                             >
