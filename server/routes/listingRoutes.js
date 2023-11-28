@@ -7,7 +7,6 @@ const router = express.Router();
 
 router.post("/", authController.protect, listingController.createListing);
 router.get("/:id", authController.protect, listingController.getUsersListings);
-// get single listing based on id
 router.get("/listing/:id", listingController.getListing);
 router.delete("/:id", authController.protect, listingController.deleteListing);
 router.put("/:id", authController.protect, listingController.updateListing);

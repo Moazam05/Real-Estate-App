@@ -95,8 +95,6 @@ exports.updateListing = catchAsync(async (req, res, next) => {
   // 5) Send the response
   res.status(200).json({
     status: "success",
-    data: {
-      listing: updatedListing,
-    },
+    data: updatedListing,
   });
 });

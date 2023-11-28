@@ -172,7 +172,6 @@ const CreateListing = () => {
       // Update Listing
       if (id) {
         const updatedListing: any = await updateListing({ id, payload });
-
         if (updatedListing?.data?.status) {
           setToast({
             ...toast,
@@ -180,9 +179,7 @@ const CreateListing = () => {
             appearence: true,
             type: "success",
           });
-          setTimeout(() => {
-            navigate("/listings");
-          });
+          navigate("/listings");
         }
         if (updatedListing?.error) {
           setToast({

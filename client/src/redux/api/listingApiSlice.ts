@@ -41,11 +41,10 @@ export const listingApiSlice = apiSlice.injectEndpoints({
     }),
     updateListing: builder.mutation({
       query: (data) => {
-        console.log("api", data);
         return {
           url: `listings/${data.id}`,
           method: "PUT",
-          body: data,
+          body: data.payload,
         };
       },
       invalidatesTags: ["Listing"],
