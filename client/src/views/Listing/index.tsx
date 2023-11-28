@@ -35,9 +35,11 @@ import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import { selectedUserId } from "../../redux/auth/authSlice";
 import useTypedSelector from "../../hooks/useTypedSelector";
 import OverlayLoader from "../../components/Spinner/OverlayLoader";
+import PrimaryPhoneInput from "../../components/PhoneInput";
 
 interface listingForm {
   name: string;
+  phoneNumber: string;
   description: string;
   address: string;
   regularPrice: number;
@@ -58,6 +60,7 @@ const CreateListing = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formValues, setFormValues] = useState<listingForm>({
     name: "",
+    phoneNumber: "",
     description: "",
     address: "",
     regularPrice: 25000,
@@ -162,6 +165,7 @@ const CreateListing = () => {
       parking: data.parking,
       type: data.type,
       offer: data.offer,
+      phoneNumber: data.phoneNumber,
       imageUrls,
       user: userId,
     };
@@ -244,6 +248,7 @@ const CreateListing = () => {
         parking: listingData?.data?.parking,
         type: listingData?.data?.type,
         offer: listingData?.data?.offer,
+        phoneNumber: listingData?.data?.phoneNumber,
       });
       setImageUrls(listingData?.data?.imageUrls);
     }
@@ -338,33 +343,65 @@ const CreateListing = () => {
                         </Box>
                         <Box
                           sx={{
-                            height: "85px",
-                            marginTop:
-                              errors.description && touched.description
-                                ? "0"
-                                : "15px",
+                            display: "flex",
+                            alignItems: "center",
+                            width: "100%",
+                            gap: 1,
                           }}
                         >
-                          <SubHeading sx={{ marginBottom: "5px" }}>
-                            Address
-                          </SubHeading>
-                          <PrimaryInput
-                            type="text"
-                            label=""
-                            name="address"
-                            placeholder="Address"
-                            value={values.address}
-                            helperText={
-                              errors.address && touched.address
-                                ? errors.address
-                                : ""
-                            }
-                            error={
-                              errors.address && touched.address ? true : false
-                            }
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          />
+                          <Box
+                            sx={{
+                              height: "85px",
+                              marginTop:
+                                errors.description && touched.description
+                                  ? "0"
+                                  : "15px",
+                              width: "50%",
+                            }}
+                          >
+                            <SubHeading sx={{ marginBottom: "5px" }}>
+                              Address
+                            </SubHeading>
+                            <PrimaryInput
+                              type="text"
+                              label=""
+                              name="address"
+                              placeholder="Address"
+                              value={values.address}
+                              helperText={
+                                errors.address && touched.address
+                                  ? errors.address
+                                  : ""
+                              }
+                              error={
+                                errors.address && touched.address ? true : false
+                              }
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                            />
+                          </Box>
+                          <Box
+                            sx={{
+                              height: "85px",
+                              marginTop:
+                                errors.phoneNumber && touched.phoneNumber
+                                  ? "0"
+                                  : "15px",
+                              width: "50%",
+                            }}
+                          >
+                            <SubHeading sx={{ marginBottom: "5px" }}>
+                              Contact Number
+                            </SubHeading>
+
+                            <PrimaryPhoneInput
+                              value={values.phoneNumber}
+                              name="phoneNumber"
+                              formik={props}
+                              variant="outlined"
+                              label=""
+                            />
+                          </Box>
                         </Box>
                         <Box
                           sx={{

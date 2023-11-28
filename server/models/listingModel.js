@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const listingSchema = new mongoose.Schema(
   {
@@ -13,6 +14,10 @@ const listingSchema = new mongoose.Schema(
     address: {
       type: String,
       required: [true, "Please provide an address"],
+    },
+    phoneNumber: {
+      type: String,
+      required: [validator.isMobilePhone, "Please provide a phone number"],
     },
     regularPrice: {
       type: Number,
