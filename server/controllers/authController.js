@@ -60,6 +60,20 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  if (!user) {
+    return next(new AppError("No user found with that ID", 404));
+  }
+
+  user.password = undefined;
+
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
+
 exports.update = catchAsync(async (req, res, next) => {
   const { username, email, password, avatar } = req.body.payload;
 

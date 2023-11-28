@@ -17,7 +17,11 @@ const listingSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: String,
-      required: [validator.isMobilePhone, "Please provide a phone number"],
+      validate: {
+        validator: validator.isMobilePhone,
+        message: "Please provide a valid phone number",
+      },
+      required: [true, "Please provide your phone number"],
     },
     regularPrice: {
       type: Number,

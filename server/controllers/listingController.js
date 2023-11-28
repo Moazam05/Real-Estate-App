@@ -30,7 +30,6 @@ exports.getUsersListings = catchAsync(async (req, res, next) => {
 exports.getListing = catchAsync(async (req, res, next) => {
   // 1) Find the listing
   const listing = await Listing.findById(req.params.id);
-  console.log("req", req.params.id);
 
   // 2) Check if the listing exists
   if (!listing) {

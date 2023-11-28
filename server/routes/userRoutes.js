@@ -10,6 +10,7 @@ router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 
 // USER CONTROLLER
+router.get("/:id", authController.protect, authController.getUser);
 router.put("/update/:id", authController.protect, authController.update);
 router.delete("/delete/:id", authController.protect, authController.delete);
 
