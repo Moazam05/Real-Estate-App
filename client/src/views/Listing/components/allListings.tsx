@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Grid, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Heading, SubHeading } from "../../../components/Heading";
+import { Heading } from "../../../components/Heading";
 import {
   useDeleteListingMutation,
   useGetListingQuery,
@@ -13,6 +13,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import ToastAlert from "../../../components/ToastAlert/ToastAlert";
 import DotLoader from "../../../components/Spinner/dotLoader";
+import { convertToFormattedDate } from "../../../utils";
 
 const AllListings = () => {
   const navigate = useNavigate();
@@ -62,6 +63,8 @@ const AllListings = () => {
     }
   };
 
+  console.log("data", data?.data);
+
   return (
     <Box sx={{ marginTop: "50px" }}>
       {isLoading && <OverlayLoader />}
@@ -110,80 +113,111 @@ const AllListings = () => {
                 return (
                   <Box
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      marginTop: "20px",
-                      justifyContent: "space-between",
                       width: "100%",
-                      padding: "15px 20px",
+                      padding: "20px 20px 15px 20px",
                       borderRadius: "5px",
                       boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
                       border: "1px solid #ccc",
                       margin: "20px 0",
                     }}
+                    key={item?._id}
                   >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                      <Box>
+                    <Box sx={{ display: "flex" }}>
+                      <Grid item xs={2}>
                         <img
                           src={item?.imageUrls[0]}
                           width={100}
-                          height={100}
+                          height={132}
                           alt="listing"
                           style={{ borderRadius: "5px" }}
                         />
-                      </Box>
-                      <Box>
+                      </Grid>
+                      <Grid item xs={10}>
                         <Box
                           sx={{
-                            fontSize: "20px",
-                            fontWeight: 700,
-                            color: "#49454F",
-                            "&:hover": {
-                              cursor: "pointer",
-                              textDecoration: "underline",
-                            },
-                          }}
-                          onClick={() => {
-                            navigate(`/listing/${item?._id}`);
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 2,
                           }}
                         >
-                          {item?.name}
+                          <Box>
+                            <Box
+                              sx={{
+                                fontSize: "18px",
+                                fontWeight: 600,
+                                color: "#49454F",
+                                "&:hover": {
+                                  cursor: "pointer",
+                                  textDecoration: "underline",
+                                },
+                              }}
+                              onClick={() => {
+                                navigate(`/listing/${item?._id}`);
+                              }}
+                            >
+                              {item?.name}
+                            </Box>
+                            <Box
+                              sx={{
+                                color: "#1e293b",
+                                height: "60px",
+                                marginTop: "8px",
+                              }}
+                            >
+                              {item?.description?.length > 125
+                                ? item?.description?.substring(0, 125) + "..."
+                                : item?.description}
+                            </Box>
+                          </Box>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: 1,
+                            }}
+                          >
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              sx={{ textTransform: "capitalize" }}
+                              startIcon={<MdDeleteOutline />}
+                              disabled={isDeleting}
+                              onClick={() => {
+                                DeleteListingHandler(item?._id);
+                              }}
+                            >
+                              {isDeleting ? (
+                                <DotLoader color="#fff" size={12} />
+                              ) : (
+                                "Delete"
+                              )}
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              color="success"
+                              sx={{ textTransform: "capitalize" }}
+                              startIcon={<CiEdit />}
+                              onClick={() => {
+                                navigate(`/listings/${item?._id}`);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </Box>
                         </Box>
-                        <SubHeading sx={{ fontWeight: 500, marginTop: "5px" }}>
-                          {item?.description}
-                        </SubHeading>
-                      </Box>
-                    </Box>
-                    <Box
-                      sx={{ display: "flex", flexDirection: "column", gap: 1 }}
-                    >
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        sx={{ textTransform: "capitalize" }}
-                        startIcon={<MdDeleteOutline />}
-                        disabled={isDeleting}
-                        onClick={() => {
-                          DeleteListingHandler(item?._id);
-                        }}
-                      >
-                        {isDeleting ? (
-                          <DotLoader color="#fff" size={12} />
-                        ) : (
-                          "Delete"
-                        )}
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="success"
-                        sx={{ textTransform: "capitalize" }}
-                        startIcon={<CiEdit />}
-                        onClick={() => {
-                          navigate(`/listings/${item?._id}`);
-                        }}
-                      >
-                        Edit
-                      </Button>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "end",
+                            gap: 1,
+                          }}
+                        >
+                          <Box>Date:</Box>
+                          <Box sx={{ fontWeight: 600 }}>
+                            {convertToFormattedDate(item?.createdAt)}
+                          </Box>
+                        </Box>
+                      </Grid>
                     </Box>
                   </Box>
                 );

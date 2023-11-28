@@ -78,22 +78,6 @@ export const add30Minutes = (timeString: string) => {
   return formattedTime;
 };
 
-// Notification Friendly Messages
-export function processNotification(notification: string) {
-  switch (notification) {
-    case "new-doctor-request":
-      return "New Doctor 🩺 Request";
-    case "new-doctor-request-changed":
-      return "🎉 Your requested successfully accepted";
-    case "new-appointment-request":
-      return "New 💉 Appointment Request";
-    case "appointment-status-changed":
-      return "Appointment Confirmation";
-    default:
-      return "Unknown Notification";
-  }
-}
-
 // Salman Muazam => SM
 export function getNameInitials(name: string) {
   const words = name?.split(" ");
@@ -146,4 +130,19 @@ export function thousandSeparatorNumber(number: number) {
     : formattedIntegerPart;
 
   return formattedNumber;
+}
+
+// 2023-11-28T19:07:32.365Z ===> Nov 29, 2023 and also return time
+export function convertToFormattedDate(dateString: string) {
+  const date = new Date(dateString);
+  const formattedDate = date.toLocaleString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+
+  return formattedDate;
 }

@@ -59,7 +59,7 @@ const ViewListing = () => {
         <Box sx={{ margin: "30px 0" }}>
           <Grid container spacing={2}>
             <Grid item xs={1}></Grid>
-            <Grid item xs={6}>
+            <Grid item xs={7} sx={{ paddingRight: "30px" }}>
               <Heading>{`${data?.data?.name} - Rs.${thousandSeparatorNumber(
                 data?.data?.regularPrice
               )}/`}</Heading>
@@ -137,8 +137,8 @@ const ViewListing = () => {
                   </>
                 )}
               </Box>
-              <Box sx={{ display: "flex", gap: "2px", marginTop: "15px" }}>
-                <SubHeading>Description -</SubHeading>
+              <Box sx={{ display: "flex", gap: 2, marginTop: "15px" }}>
+                <SubHeading>Description </SubHeading>
                 <Box sx={{ color: "#1e293b" }}>{data?.data?.description}</Box>
               </Box>
               <Box
@@ -170,7 +170,7 @@ const ViewListing = () => {
             <Grid item xs={3}>
               <Box
                 sx={{
-                  margin: "20px 0",
+                  margin: "0 0 20px 0",
                   background: "#fff",
                   borderRadius: "6px",
                   padding: "15px 20px",
