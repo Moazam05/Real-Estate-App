@@ -10,6 +10,7 @@ import PublicRoutes from "./routes/PublicRoutes";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import CreateListing from "./views/Listing";
 import AllListings from "./views/Listing/components/allListings";
+import ViewListing from "./views/Listing/components/viewListing";
 
 function App() {
   return (
@@ -56,6 +57,14 @@ function App() {
           element={
             <ProtectedRoutes>
               <AllListings />
+            </ProtectedRoutes>
+          }
+        />
+        <Route
+          path="/listing/:id"
+          element={
+            <ProtectedRoutes>
+              <ViewListing />
             </ProtectedRoutes>
           }
         />

@@ -133,9 +133,22 @@ const AllListings = () => {
                         />
                       </Box>
                       <Box>
-                        <Heading sx={{ fontSize: "20px" }}>
+                        <Box
+                          sx={{
+                            fontSize: "20px",
+                            fontWeight: 700,
+                            color: "#49454F",
+                            "&:hover": {
+                              cursor: "pointer",
+                              textDecoration: "underline",
+                            },
+                          }}
+                          onClick={() => {
+                            navigate(`/listing/${item?._id}`);
+                          }}
+                        >
                           {item?.name}
-                        </Heading>
+                        </Box>
                         <SubHeading sx={{ fontWeight: 500, marginTop: "5px" }}>
                           {item?.description}
                         </SubHeading>
