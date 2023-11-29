@@ -97,3 +97,34 @@ exports.updateListing = catchAsync(async (req, res, next) => {
     data: updatedListing,
   });
 });
+
+exports.getListings = catchAsync(async (req, res, next) => {
+  console.log("req", req.query);
+  // 1) Pagination
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 10;
+  const skip = (page - 1) * limit;
+
+  // 2) Sorting based on createdAt and descending order
+  const sort = { createdAt: -1 };
+
+  // 3) Filtering based on searchTerm
+  const searchTerm = req.query.searchTerm || "";
+  const regex = new RegExp(searchTerm, "i");
+  const filter = { $or: [{ name: regex }, { description: regex }] };
+
+  // 4) Find all listings
+  const listings = await Listing.find({
+    ...filter,
+  })
+    .skip(skip)
+    .limit(limit)
+    .sort(sort);
+
+  // 5) Send the response
+  res.status(200).json({
+    status: "success",
+    results: listings.length,
+    data: listings,
+  });
+});

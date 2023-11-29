@@ -5,10 +5,13 @@ const listingController = require("../controllers/listingController");
 
 const router = express.Router();
 
-router.post("/", authController.protect, listingController.createListing);
-router.get("/:id", authController.protect, listingController.getUsersListings);
+router.get("/get", listingController.getListings);
+
+router.use(authController.protect);
+router.post("/", listingController.createListing);
+router.get("/:id", listingController.getUsersListings);
 router.get("/listing/:id", listingController.getListing);
-router.delete("/:id", authController.protect, listingController.deleteListing);
-router.put("/:id", authController.protect, listingController.updateListing);
+router.delete("/:id", listingController.deleteListing);
+router.put("/:id", listingController.updateListing);
 
 module.exports = router;

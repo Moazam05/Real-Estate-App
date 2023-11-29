@@ -1,5 +1,5 @@
 // React Imports
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // Material UI Imports
@@ -74,7 +74,25 @@ const Header = () => {
   const avatar = useTypedSelector(selectedUserAvatar);
   const userName = useTypedSelector(selectedUserName);
 
+  const [searchText, setSearchText] = useState<any>("");
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+
+  const handleSearch = (event: any) => {
+    let value = event.target.value.toLowerCase();
+    setSearchText(value);
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("searchText", searchText);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTextFromUrl = urlParams.get("searchText");
+    if (searchTextFromUrl) {
+      setSearchText(searchTextFromUrl);
+    }
+  }, []);
 
   return (
     <header>
@@ -107,7 +125,11 @@ const Header = () => {
           </Grid>
           <Grid item xs={4}>
             <Box>
-              <SearchBar placeholder="Search..." />
+              <SearchBar
+                handleSearch={handleSearch}
+                searchText={searchText}
+                placeholder="Search..."
+              />
             </Box>
           </Grid>
           <Grid item xs={4}>

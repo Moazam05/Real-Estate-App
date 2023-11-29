@@ -11,6 +11,7 @@ import ProtectedRoutes from "./routes/ProtectedRoutes";
 import CreateListing from "./views/Listing";
 import AllListings from "./views/Listing/components/allListings";
 import ViewListing from "./views/Listing/components/viewListing";
+import SearchPage from "./views/Search";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         />
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/search" element={<SearchPage />} />
         {/* Protected Routes */}
         <Route
           path="/profile"
