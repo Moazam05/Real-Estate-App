@@ -1,8 +1,9 @@
-const catchAsync = require("../utils/catchAsync");
-const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const bcrypt = require("bcryptjs");
+// Custom Imports
+const AppError = require("../utils/appError");
+const catchAsync = require("../utils/catchAsync");
 const User = require("../models/userModel");
 const Listing = require("../models/listingModel");
 

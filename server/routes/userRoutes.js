@@ -1,4 +1,3 @@
-// 3rd Party Imports
 const express = require("express");
 // Custom Imports
 const authController = require("../controllers/authController");
@@ -10,10 +9,12 @@ router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 router.get("/:id", authController.getUser);
 
-// USER CONTROLLER
-router.put("/update/:id", authController.protect, authController.update);
-router.delete("/delete/:id", authController.protect, authController.delete);
+// PROTECTED
+router.use(authController.protect);
 
+// USER CONTROLLER
+router.put("/update/:id", authController.update);
+router.delete("/delete/:id", authController.delete);
 // GOOGLE
 router.post("/google", authController.google);
 
