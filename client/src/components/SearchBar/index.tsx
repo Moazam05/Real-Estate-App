@@ -9,12 +9,16 @@ interface searchBarProps {
   searchText?: any;
   placeholder?: any;
   handleSearch?: any;
+  onChange?: any;
+  value?: any;
 }
 
 export default function SearchBar({
   handleSearch,
   placeholder,
   searchText,
+  onChange,
+  value,
 }: searchBarProps) {
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
@@ -39,6 +43,8 @@ export default function SearchBar({
       }}
       fullWidth
       onKeyDown={handleKeyDown}
+      onChange={onChange}
+      value={searchText}
       id="outlined-basic"
       variant="outlined"
       placeholder={

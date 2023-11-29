@@ -28,6 +28,10 @@ import {
 // Icons Imports
 import { ImProfile } from "react-icons/im";
 import { IoLogOutOutline } from "react-icons/io5";
+import {
+  selectedSearchText,
+  setSearchText,
+} from "../../redux/global/globalSlice";
 
 const menuStyle = {
   cursor: "pointer",
@@ -73,13 +77,14 @@ const Header = () => {
   const navigate = useNavigate();
   const avatar = useTypedSelector(selectedUserAvatar);
   const userName = useTypedSelector(selectedUserName);
+  const searchText = useTypedSelector(selectedSearchText);
 
-  const [searchText, setSearchText] = useState<any>("");
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
 
   const handleSearch = (event: any) => {
     let value = event.target.value.toLowerCase();
-    setSearchText(value);
+    dispatch(setSearchText(value));
+
     const urlParams = new URLSearchParams(window.location.search);
     urlParams.set("searchText", searchText);
     const searchQuery = urlParams.toString();
@@ -90,9 +95,9 @@ const Header = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const searchTextFromUrl = urlParams.get("searchText");
     if (searchTextFromUrl) {
-      setSearchText(searchTextFromUrl);
+      dispatch(setSearchText(searchTextFromUrl));
     }
-  }, []);
+  }, [dispatch]);
 
   return (
     <header>
@@ -126,9 +131,11 @@ const Header = () => {
           <Grid item xs={4}>
             <Box>
               <SearchBar
-                handleSearch={handleSearch}
-                searchText={searchText}
                 placeholder="Search..."
+                searchText={searchText}
+                handleSearch={handleSearch}
+                value={searchText}
+                onChange={handleSearch}
               />
             </Box>
           </Grid>

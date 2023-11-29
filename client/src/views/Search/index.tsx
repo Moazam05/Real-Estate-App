@@ -1,5 +1,5 @@
-import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Grid,
@@ -12,45 +12,99 @@ import {
 import SearchBar from "../../components/SearchBar";
 import { Heading, SubHeading } from "../../components/Heading";
 import SelectInput from "../../components/SelectInput";
+import { useDispatch } from "react-redux";
+import useTypedSelector from "../../hooks/useTypedSelector";
+import {
+  selectedSearchText,
+  setSearchText,
+} from "../../redux/global/globalSlice";
+import { useSearchListingsQuery } from "../../redux/api/listingApiSlice";
+import OverlayLoader from "../../components/Spinner/OverlayLoader";
 
 const sortTypes = [
   {
     name: "Latest",
-    value: "latest",
+    value: "createdAt_desc",
   },
   {
     name: "Oldest",
-    value: "oldest",
+    value: "createdAt_asc",
   },
   {
     name: "Price High to Low",
-    value: "priceHighToLow",
+    value: "regularPrice_desc",
   },
   {
     name: "Price Low to High",
-    value: "priceLowToHigh",
+    value: "regularPrice_asc",
   },
 ];
 
 const SearchPage = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const searchText = useTypedSelector(selectedSearchText);
 
+  const [query, setQuery] = useState<any>("");
   const [filter, setFilter] = useState<any>({
-    searchText: "",
-    searchType: "all",
+    searchTerm: searchText,
+    type: "all",
     parking: false,
     furnished: false,
     offer: false,
-    sortBy: "latest",
+    sort: "createdAt_desc",
   });
+
+  console.log("query", query);
+
+  // Search API query
+  const { data, isLoading } = useSearchListingsQuery(query || "");
+
+  console.log("data", data);
 
   const handleSearch = (event: any) => {
     let value = event.target.value.toLowerCase();
-    setFilter({ ...filter, searchText: value });
+    setFilter({ ...filter, searchTerm: value });
+    dispatch(setSearchText(value));
   };
+
+  const SearchHandler = async () => {
+    const urlParams = new URLSearchParams();
+    urlParams.set("searchTerm", filter.searchTerm);
+    urlParams.set("type", filter.type);
+    urlParams.set("parking", filter.parking);
+    urlParams.set("furnished", filter.furnished);
+    urlParams.set("offer", filter.offer);
+    urlParams.set("sort", filter.sort);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+    setQuery(searchQuery);
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTerm = urlParams.get("searchTerm");
+    const type = urlParams.get("type");
+    const parking = urlParams.get("parking");
+    const furnished = urlParams.get("furnished");
+    const offer = urlParams.get("offer");
+    const sort = urlParams.get("sort");
+
+    if (searchTerm || type || parking || furnished || offer || sort) {
+      setFilter({
+        searchTerm: searchTerm || "",
+        type: type || "all",
+        parking: parking || false,
+        furnished: furnished || false,
+        offer: offer || false,
+        sort: sort || "createdAt_desc",
+      });
+    }
+  }, []);
 
   return (
     <Box sx={{ margin: "50px 0 0 0" }}>
+      {isLoading && <OverlayLoader />}
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <Box
@@ -64,16 +118,18 @@ const SearchPage = () => {
           >
             <SubHeading sx={{ marginBottom: "5px" }}>Search</SubHeading>
             <SearchBar
-              handleSearch={handleSearch}
-              searchText={filter.searchText}
               placeholder="Search..."
+              searchText={searchText}
+              handleSearch={handleSearch}
+              value={filter.searchTerm}
+              onChange={handleSearch}
             />
             <Box sx={{ marginTop: "10px" }}>
               <RadioGroup
                 name="type"
-                value={filter.searchType}
+                value={filter.type}
                 onChange={(event) => {
-                  setFilter({ ...filter, searchType: event.target.value });
+                  setFilter({ ...filter, type: event.target.value });
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -128,9 +184,9 @@ const SearchPage = () => {
             <SelectInput
               styles={{ width: "100%" }}
               name="sort"
-              value={filter.sortBy}
+              value={filter.sort}
               onChange={(event: any) => {
-                setFilter({ ...filter, sortBy: event.target.value });
+                setFilter({ ...filter, sort: event.target.value });
               }}
               label=""
               data={sortTypes}
@@ -157,6 +213,7 @@ const SearchPage = () => {
                     background: "#334155",
                   },
                 }}
+                onClick={SearchHandler}
               >
                 Search
               </Button>

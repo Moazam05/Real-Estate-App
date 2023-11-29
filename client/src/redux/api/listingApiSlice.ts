@@ -49,6 +49,15 @@ export const listingApiSlice = apiSlice.injectEndpoints({
       },
       invalidatesTags: ["Listing"],
     }),
+    searchListings: builder.query({
+      query: (searchTerm) => {
+        return {
+          url: `listings/get/${searchTerm?.searchQuery}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["Listing"],
+    }),
   }),
 });
 
@@ -58,4 +67,5 @@ export const {
   useDeleteListingMutation,
   useUpdateListingMutation,
   useGetSingleListingQuery,
+  useSearchListingsQuery,
 } = listingApiSlice;

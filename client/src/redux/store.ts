@@ -2,6 +2,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 // Custom Imports
 import authReducer from "./auth/authSlice";
+import globalReducer from "./global/globalSlice";
 import { apiSlice } from "./api/apiSlice";
 
 export const store = configureStore({
@@ -9,6 +10,7 @@ export const store = configureStore({
     [apiSlice.reducerPath]: apiSlice.reducer,
 
     auth: authReducer,
+    global: globalReducer,
   },
 
   middleware: (getDefaultMiddleware) =>
