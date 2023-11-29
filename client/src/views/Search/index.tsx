@@ -153,7 +153,7 @@ const SearchPage = () => {
                     label="Rent"
                   />
                   <FormControlLabel
-                    value="sell"
+                    value="sale"
                     control={<Radio />}
                     label="Sell"
                   />
@@ -245,15 +245,32 @@ const SearchPage = () => {
                       borderRadius: "5px",
                       width: "340px",
                       marginBottom: "20px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      navigate(`/listing/${item._id}`);
                     }}
                   >
-                    <Box sx={{ height: "200px" }}>
+                    <Box
+                      sx={{
+                        height: "200px",
+                        overflow: "hidden",
+                        position: "relative",
+                        "&:hover img": {
+                          transform: "scale(1.1)",
+                        },
+                      }}
+                    >
                       <img
                         src={item?.imageUrls[0]}
                         alt="listing"
                         height="100%"
                         width="100%"
-                        style={{ objectFit: "cover", borderRadius: "5px" }}
+                        style={{
+                          objectFit: "cover",
+                          borderRadius: "5px",
+                          transition: "transform 0.3s ease",
+                        }}
                       />
                     </Box>
                     <Box sx={{ padding: "20px 15px" }}>

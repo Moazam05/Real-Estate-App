@@ -99,8 +99,6 @@ exports.updateListing = catchAsync(async (req, res, next) => {
 });
 
 exports.getListings = catchAsync(async (req, res, next) => {
-  console.log("req", req.query);
-
   // 1) Pagination
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 10;
@@ -135,17 +133,29 @@ exports.getListings = catchAsync(async (req, res, next) => {
 
   // 5) Find all listings based on parking true or false
   if (req.query.parking) {
-    filter.parking = req.query.parking;
+    if (req.query.parking === "false") {
+      filter.parking = { $in: [true, false] };
+    } else {
+      filter.parking = req.query.parking;
+    }
   }
 
   // 6) Find all listings based on furnished true or false
   if (req.query.furnished) {
-    filter.furnished = req.query.furnished;
+    if (req.query.furnished === "false") {
+      filter.furnished = { $in: [true, false] };
+    } else {
+      filter.furnished = req.query.furnished;
+    }
   }
 
   // 7) Find all listings based on offer true or false
   if (req.query.offer) {
-    filter.offer = req.query.offer;
+    if (req.query.offer === "false") {
+      filter.offer = { $in: [true, false] };
+    } else {
+      filter.offer = req.query.offer;
+    }
   }
 
   // 4) Find all listings

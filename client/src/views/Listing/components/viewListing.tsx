@@ -15,8 +15,6 @@ import { FaChair } from "react-icons/fa6";
 import { FaBed } from "react-icons/fa";
 import { IoIosCall } from "react-icons/io";
 import { useGetUserQuery } from "../../../redux/api/userApiSlice";
-import { selectedUserId } from "../../../redux/auth/authSlice";
-import useTypedSelector from "../../../hooks/useTypedSelector";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoMdPerson } from "react-icons/io";
 
@@ -30,14 +28,13 @@ const iconStyle = {
 
 const ViewListing = () => {
   const { id } = useParams();
-  const userId = useTypedSelector(selectedUserId);
   SwiperCore.use([Navigation]);
 
   const { data, isLoading } = useGetSingleListingQuery(id);
   const images = data?.data?.imageUrls;
 
   // User API Query
-  const { data: userData, isLoading: isUserLoading } = useGetUserQuery(userId);
+  const { data: userData, isLoading: isUserLoading } = useGetUserQuery(id);
 
   return (
     <>

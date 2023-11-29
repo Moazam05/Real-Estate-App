@@ -8,9 +8,9 @@ const router = express.Router();
 // AUTH CONTROLLER
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
+router.get("/:id", authController.getUser);
 
 // USER CONTROLLER
-router.get("/:id", authController.protect, authController.getUser);
 router.put("/update/:id", authController.protect, authController.update);
 router.delete("/delete/:id", authController.protect, authController.delete);
 

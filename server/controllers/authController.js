@@ -1,9 +1,10 @@
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const bcrypt = require("bcryptjs");
+const User = require("../models/userModel");
+const Listing = require("../models/listingModel");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -61,7 +62,8 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const listing = await Listing.findById(req.params.id);
+  const user = await User.findById(listing.user);
   if (!user) {
     return next(new AppError("No user found with that ID", 404));
   }

@@ -37,6 +37,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/listing/:id" element={<ViewListing />} />
         {/* Protected Routes */}
         <Route
           path="/profile"
@@ -59,14 +60,6 @@ function App() {
           element={
             <ProtectedRoutes>
               <AllListings />
-            </ProtectedRoutes>
-          }
-        />
-        <Route
-          path="/listing/:id"
-          element={
-            <ProtectedRoutes>
-              <ViewListing />
             </ProtectedRoutes>
           }
         />
