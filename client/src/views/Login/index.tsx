@@ -19,6 +19,7 @@ import DotLoader from "../../components/Spinner/dotLoader";
 import { loginSchema } from "./components/validationSchema";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
+// Google OAuth
 import GoogleOAuth from "../../components/OAuth";
 
 interface ISLoginForm {

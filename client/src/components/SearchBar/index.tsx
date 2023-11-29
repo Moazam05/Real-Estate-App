@@ -55,7 +55,7 @@ export default function SearchBar({
       InputProps={{
         sx: {
           borderRadius: "5px",
-          background: "#fff",
+          background: "#f1f5f9",
           height: "45px",
           border: "none",
         },

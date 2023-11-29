@@ -1,26 +1,23 @@
 // React Imports
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// MUI Imports
-import { Box, Grid, Button, Tooltip } from "@mui/material";
-// React Icons
-import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { useDispatch } from "react-redux";
 // Formik Imports
 import { Form, Formik, FormikProps } from "formik";
+// Component Imports
 import { Heading, SubHeading } from "../../components/Heading";
 import { signUpSchema } from "../SignUp/components/validationSchema";
-import { onKeyDown } from "../../utils";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
+import DotLoader from "../../components/Spinner/dotLoader";
+// Utils Imports
+import { onKeyDown } from "../../utils";
+// Hooks Imports
 import useTypedSelector from "../../hooks/useTypedSelector";
-import {
-  selectedUserAvatar,
-  selectedUserName,
-  selectedUserEmail,
-  setUser,
-  selectedUserId,
-} from "../../redux/auth/authSlice";
-import { useDispatch } from "react-redux";
+// React Icons
+import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { MdOutlineDeleteSweep } from "react-icons/md";
+// Firebase Storage
 import {
   getStorage,
   ref,
@@ -29,12 +26,20 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
+// Redux Imports
 import {
   useDeleteMutation,
   useUpdateMutation,
 } from "../../redux/api/userApiSlice";
-import DotLoader from "../../components/Spinner/dotLoader";
-import { MdOutlineDeleteSweep } from "react-icons/md";
+import {
+  selectedUserAvatar,
+  selectedUserName,
+  selectedUserEmail,
+  setUser,
+  selectedUserId,
+} from "../../redux/auth/authSlice";
+// MUI Imports
+import { Box, Grid, Button, Tooltip } from "@mui/material";
 
 interface ISProfileForm {
   userName: string;

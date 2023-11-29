@@ -11,11 +11,13 @@ import { Form, Formik, FormikProps } from "formik";
 import { onKeyDown } from "../../utils";
 // Redux Imports
 import { useSignupMutation } from "../../redux/api/authApiSlice";
+// Components Imports
 import DotLoader from "../../components/Spinner/dotLoader";
 import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
 import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import { signUpSchema } from "./components/validationSchema";
 import { Heading, SubHeading } from "../../components/Heading";
+// Google OAuth Imports
 import GoogleOAuth from "../../components/OAuth";
 
 interface ISSignUpForm {

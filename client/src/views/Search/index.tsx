@@ -1,5 +1,8 @@
+// React Imports
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+// MUI Imports
 import {
   Box,
   Grid,
@@ -9,21 +12,25 @@ import {
   Checkbox,
   Button,
 } from "@mui/material";
+// Custom Imports
 import SearchBar from "../../components/SearchBar";
 import { Heading, SubHeading } from "../../components/Heading";
 import SelectInput from "../../components/SelectInput";
-import { useDispatch } from "react-redux";
+import OverlayLoader from "../../components/Spinner/OverlayLoader";
+// Hooks Imports
 import useTypedSelector from "../../hooks/useTypedSelector";
+// Redux Imports
 import {
   selectedSearchText,
   setSearchText,
 } from "../../redux/global/globalSlice";
 import { useSearchListingsQuery } from "../../redux/api/listingApiSlice";
-import OverlayLoader from "../../components/Spinner/OverlayLoader";
+// React Icons
 import { FaLocationDot } from "react-icons/fa6";
-import { thousandSeparatorNumber } from "../../utils";
 import { FaBed } from "react-icons/fa";
 import { FaBath } from "react-icons/fa";
+// Utils Imports
+import { thousandSeparatorNumber } from "../../utils";
 
 const iconStyle = {
   display: "flex",
@@ -237,151 +244,173 @@ const SearchPage = () => {
           >
             <Heading sx={{ margin: "0 0 5px 0" }}>Listing Results</Heading>
             <Grid container spacing={2}>
-              {data?.data?.map((item: any) => (
-                <Grid item xs={4} key={item._id}>
-                  <Box
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "5px",
-                      width: "340px",
-                      marginBottom: "20px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      navigate(`/listing/${item._id}`);
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        height: "200px",
-                        overflow: "hidden",
-                        position: "relative",
-                        "&:hover img": {
-                          transform: "scale(1.1)",
-                        },
-                      }}
-                    >
-                      <img
-                        src={item?.imageUrls[0]}
-                        alt="listing"
-                        height="100%"
-                        width="100%"
-                        style={{
-                          objectFit: "cover",
+              {data?.data?.length === 0 ? (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "20px 15px 20px",
+                    borderRadius: "5px",
+                    boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
+                    border: "1px solid #ccc",
+                    margin: "16px 0",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    width: "300px",
+                    background: "#fff",
+                  }}
+                >
+                  No results found
+                </Box>
+              ) : (
+                <>
+                  {data?.data?.map((item: any) => (
+                    <Grid item xs={4} key={item._id}>
+                      <Box
+                        sx={{
+                          background: "#fff",
                           borderRadius: "5px",
-                          transition: "transform 0.3s ease",
+                          width: "340px",
+                          marginBottom: "20px",
+                          cursor: "pointer",
                         }}
-                      />
-                    </Box>
-                    <Box sx={{ padding: "20px 15px" }}>
-                      <SubHeading
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: "18px",
-                          color: "#334155",
+                        onClick={() => {
+                          navigate(`/listing/${item._id}`);
                         }}
                       >
-                        {item?.name?.length > 30
-                          ? item?.name?.substring(0, 30) + "..."
-                          : item?.name}
-                      </SubHeading>
-                      <Box
-                        sx={{
-                          marginTop: "5px",
-                          color: "#4b5563",
-                          fontSize: "13px",
-                          fontWeight: 500,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                        }}
-                      >
-                        <FaLocationDot style={{ color: "#15803d" }} />
-                        {item?.address}
-                      </Box>
-                      <Box
-                        sx={{
-                          marginTop: "5px",
-                          color: "#4b5563",
-                          fontSize: "13px",
-                          height: "55px",
-                        }}
-                      >
-                        {item?.description?.length > 150
-                          ? item?.description?.substring(0, 150) + "..."
-                          : item?.description}
-                      </Box>
-                      <Box
-                        sx={{
-                          color: "#64748b",
-                          fontWeight: 600,
-                          fontSize: "16px",
-                          marginTop: "10px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          gap: "5px",
-                        }}
-                      >
-                        Rs. {thousandSeparatorNumber(item?.regularPrice)}{" "}
-                        {item?.type === "rent" ? "/ month" : ""}
-                        <Box>
-                          {item?.type === "rent" ? (
-                            <Box
-                              sx={{
-                                background: "#0078a5",
-                                fontSize: "12px",
-                                color: "#fff",
-                                borderRadius: "50%",
-                                padding: "5px 10px",
-                                display: "inline-block",
-                              }}
-                            >
-                              Rent
+                        <Box
+                          sx={{
+                            height: "200px",
+                            overflow: "hidden",
+                            position: "relative",
+                            "&:hover img": {
+                              transform: "scale(1.1)",
+                            },
+                          }}
+                        >
+                          <img
+                            src={item?.imageUrls[0]}
+                            alt="listing"
+                            height="100%"
+                            width="100%"
+                            style={{
+                              objectFit: "cover",
+                              borderRadius: "5px",
+                              transition: "transform 0.3s ease",
+                            }}
+                          />
+                        </Box>
+                        <Box sx={{ padding: "20px 15px" }}>
+                          <SubHeading
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: "18px",
+                              color: "#334155",
+                            }}
+                          >
+                            {item?.name?.length > 30
+                              ? item?.name?.substring(0, 30) + "..."
+                              : item?.name}
+                          </SubHeading>
+                          <Box
+                            sx={{
+                              marginTop: "5px",
+                              color: "#4b5563",
+                              fontSize: "13px",
+                              fontWeight: 500,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "5px",
+                            }}
+                          >
+                            <FaLocationDot style={{ color: "#15803d" }} />
+                            {item?.address}
+                          </Box>
+                          <Box
+                            sx={{
+                              marginTop: "5px",
+                              color: "#4b5563",
+                              fontSize: "13px",
+                              height: "55px",
+                            }}
+                          >
+                            {item?.description?.length > 150
+                              ? item?.description?.substring(0, 150) + "..."
+                              : item?.description}
+                          </Box>
+                          <Box
+                            sx={{
+                              color: "#64748b",
+                              fontWeight: 600,
+                              fontSize: "16px",
+                              marginTop: "10px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: "5px",
+                            }}
+                          >
+                            Rs. {thousandSeparatorNumber(item?.regularPrice)}{" "}
+                            {item?.type === "rent" ? "/ month" : ""}
+                            <Box>
+                              {item?.type === "rent" ? (
+                                <Box
+                                  sx={{
+                                    background: "#0078a5",
+                                    fontSize: "12px",
+                                    color: "#fff",
+                                    borderRadius: "50%",
+                                    padding: "5px 10px",
+                                    display: "inline-block",
+                                  }}
+                                >
+                                  Rent
+                                </Box>
+                              ) : (
+                                <Box
+                                  sx={{
+                                    background: "#7fb742",
+                                    fontSize: "12px",
+                                    color: "#fff",
+                                    borderRadius: "50%",
+                                    padding: "5px 10px",
+                                    display: "inline-block",
+                                  }}
+                                >
+                                  Sale
+                                </Box>
+                              )}
                             </Box>
-                          ) : (
-                            <Box
-                              sx={{
-                                background: "#7fb742",
-                                fontSize: "12px",
-                                color: "#fff",
-                                borderRadius: "50%",
-                                padding: "5px 10px",
-                                display: "inline-block",
-                              }}
-                            >
-                              Sale
+                          </Box>
+                          <Box
+                            sx={{
+                              marginTop: "7px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                            }}
+                          >
+                            <Box sx={{ display: "flex", gap: 1 }}>
+                              <Box sx={iconStyle}>
+                                <FaBed
+                                  style={{ color: "#334155", marginTop: "3px" }}
+                                />
+                                {item?.bedrooms} Beds
+                              </Box>
+                              <Box sx={iconStyle}>
+                                <FaBath
+                                  style={{ color: "#334155", marginTop: "3px" }}
+                                />
+                                {item?.bathrooms} Baths
+                              </Box>
                             </Box>
-                          )}
+                          </Box>
                         </Box>
                       </Box>
-                      <Box
-                        sx={{
-                          marginTop: "7px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <Box sx={iconStyle}>
-                            <FaBed
-                              style={{ color: "#334155", marginTop: "3px" }}
-                            />
-                            {item?.bedrooms} Beds
-                          </Box>
-                          <Box sx={iconStyle}>
-                            <FaBath
-                              style={{ color: "#334155", marginTop: "3px" }}
-                            />
-                            {item?.bathrooms} Baths
-                          </Box>
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
-                </Grid>
-              ))}
+                    </Grid>
+                  ))}
+                </>
+              )}
             </Grid>
           </Box>
         </Grid>

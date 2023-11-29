@@ -1,7 +1,7 @@
 // React Imports
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { useNavigate } from "react-router-dom";
+// Formik Imports
 import { Form, Formik, FormikProps } from "formik";
 // MUI Imports
 import {
@@ -13,10 +13,9 @@ import {
   Checkbox,
   Radio,
 } from "@mui/material";
-import { Heading, SubHeading } from "../../components/Heading";
-import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
+// Utils Imports
 import { onKeyDown } from "../../utils";
-import { listingSchema } from "./components/validationSchema";
+// Firebase Imports
 import {
   UploadTask,
   getDownloadURL,
@@ -25,15 +24,21 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase";
-import DotLoader from "../../components/Spinner/dotLoader";
+// Redux Imports
 import {
   useCreateListingMutation,
   useGetSingleListingQuery,
   useUpdateListingMutation,
 } from "../../redux/api/listingApiSlice";
-import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import { selectedUserId } from "../../redux/auth/authSlice";
+// Hooks Imports
 import useTypedSelector from "../../hooks/useTypedSelector";
+// Custom Imports
+import { Heading, SubHeading } from "../../components/Heading";
+import PrimaryInput from "../../components/PrimaryInput/PrimaryInput";
+import { listingSchema } from "./components/validationSchema";
+import DotLoader from "../../components/Spinner/dotLoader";
+import ToastAlert from "../../components/ToastAlert/ToastAlert";
 import OverlayLoader from "../../components/Spinner/OverlayLoader";
 import PrimaryPhoneInput from "../../components/PhoneInput";
 

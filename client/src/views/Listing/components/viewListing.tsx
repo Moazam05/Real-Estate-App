@@ -1,22 +1,29 @@
+// React Imports
 import { useParams } from "react-router-dom";
-import { useGetSingleListingQuery } from "../../../redux/api/listingApiSlice";
-import OverlayLoader from "../../../components/Spinner/OverlayLoader";
+// MUI Imports
 import { Box, Grid, Divider } from "@mui/material";
+// Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
+// Component Imports
+import OverlayLoader from "../../../components/Spinner/OverlayLoader";
 import { Heading, SubHeading } from "../../../components/Heading";
+// Utils Imports
 import { maskingPhoneNumber, thousandSeparatorNumber } from "../../../utils";
+// React Icons
 import { FaLocationDot } from "react-icons/fa6";
 import { FaBath } from "react-icons/fa";
 import { FaParking } from "react-icons/fa";
 import { FaChair } from "react-icons/fa6";
 import { FaBed } from "react-icons/fa";
 import { IoIosCall } from "react-icons/io";
-import { useGetUserQuery } from "../../../redux/api/userApiSlice";
 import { HiOutlineMail } from "react-icons/hi";
 import { IoMdPerson } from "react-icons/io";
+// Redux Imports
+import { useGetUserQuery } from "../../../redux/api/userApiSlice";
+import { useGetSingleListingQuery } from "../../../redux/api/listingApiSlice";
 
 const iconStyle = {
   display: "flex",
