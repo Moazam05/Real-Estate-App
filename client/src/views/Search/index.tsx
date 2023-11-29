@@ -139,6 +139,7 @@ const SearchPage = () => {
               handleSearch={handleSearch}
               value={filter.searchTerm}
               onChange={handleSearch}
+              color="#fff"
             />
             <Box sx={{ marginTop: "10px" }}>
               <RadioGroup

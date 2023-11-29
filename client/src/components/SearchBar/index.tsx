@@ -11,6 +11,7 @@ interface searchBarProps {
   handleSearch?: any;
   onChange?: any;
   value?: any;
+  color?: any;
 }
 
 export default function SearchBar({
@@ -19,6 +20,7 @@ export default function SearchBar({
   searchText,
   onChange,
   value,
+  color,
 }: searchBarProps) {
   const handleKeyDown = (event: any) => {
     if (event.key === "Enter") {
@@ -55,7 +57,7 @@ export default function SearchBar({
       InputProps={{
         sx: {
           borderRadius: "5px",
-          background: "#f1f5f9",
+          background: color ? color : "#f1f5f9",
           height: "45px",
           border: "none",
         },
