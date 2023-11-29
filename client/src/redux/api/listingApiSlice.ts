@@ -52,7 +52,7 @@ export const listingApiSlice = apiSlice.injectEndpoints({
     searchListings: builder.query({
       query: (searchTerm) => {
         return {
-          url: `listings/get/${searchTerm?.searchQuery}`,
+          url: `listings/get/?${searchTerm}`,
           method: "GET",
         };
       },

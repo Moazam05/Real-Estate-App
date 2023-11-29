@@ -106,7 +106,7 @@ exports.getListings = catchAsync(async (req, res, next) => {
   const limit = req.query.limit * 1 || 10;
   const skip = (page - 1) * limit;
 
-  // 2) Sorting based on createdAt and descending order
+  // 2) Sorting
   // i) regularPrice_asc
   // ii) regularPrice_desc
   // iii) createdAt_desc
