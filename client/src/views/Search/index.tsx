@@ -378,7 +378,7 @@ const SearchPage = () => {
                                     display: "inline-block",
                                   }}
                                 >
-                                  Sale
+                                  Sell
                                 </Box>
                               )}
                             </Box>
