@@ -222,7 +222,7 @@ const SearchPage = () => {
                     <FormControlLabel
                       value="sale"
                       control={<Radio />}
-                      label="Sell"
+                      label="Sale"
                     />
                   </Box>
                 </RadioGroup>
@@ -445,7 +445,7 @@ const SearchPage = () => {
                                     display: "inline-block",
                                   }}
                                 >
-                                  Sell
+                                  Sale
                                 </Box>
                               )}
                             </Box>
