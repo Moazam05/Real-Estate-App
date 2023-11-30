@@ -16,7 +16,7 @@ import {
 import SearchBar from "../../components/SearchBar";
 import { Heading, SubHeading } from "../../components/Heading";
 import SelectInput from "../../components/SelectInput";
-import OverlayLoader from "../../components/Spinner/OverlayLoader";
+import DotLoader from "../../components/Spinner/dotLoader";
 // Hooks Imports
 import useTypedSelector from "../../hooks/useTypedSelector";
 // Redux Imports
@@ -24,7 +24,6 @@ import {
   selectedSearchText,
   setSearchText,
 } from "../../redux/global/globalSlice";
-import { useSearchListingsQuery } from "../../redux/api/listingApiSlice";
 // React Icons
 import { FaLocationDot } from "react-icons/fa6";
 import { FaBed } from "react-icons/fa";
@@ -65,134 +64,117 @@ const SearchPage = () => {
   const dispatch = useDispatch();
   const searchText = useTypedSelector(selectedSearchText);
 
-  const [listings, setListings] = useState<any>([]);
-  const [showMore, setShowMore] = useState(false);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(3);
-
-  const [query, setQuery] = useState<any>("");
-  const [filter, setFilter] = useState<any>({
-    searchTerm: searchText,
+  const [sidebardata, setSidebardata] = useState<any>({
+    searchTerm: "",
     type: "all",
     parking: false,
     furnished: false,
     offer: false,
     sort: "createdAt_desc",
   });
-  // Search API query
-  const { data, isLoading } = useSearchListingsQuery(query);
+
+  const [loading, setLoading] = useState(false);
+  const [listings, setListings] = useState<any>([]);
+  const [showMore, setShowMore] = useState(false);
 
   const handleSearch = (event: any) => {
     let value = event.target.value.toLowerCase();
-    setFilter({ ...filter, searchTerm: value });
+    setSidebardata({ ...sidebardata, searchTerm: value });
     dispatch(setSearchText(value));
-  };
-
-  const SearchHandler = async () => {
-    setPage(1);
-    const urlParams = new URLSearchParams();
-    urlParams.set("searchTerm", filter.searchTerm);
-    urlParams.set("type", filter.type);
-    urlParams.set("parking", filter.parking);
-    urlParams.set("furnished", filter.furnished);
-    urlParams.set("offer", filter.offer);
-    urlParams.set("sort", filter.sort);
-    urlParams.set("page", page.toString());
-    urlParams.set("limit", limit.toString());
-    const searchQuery = urlParams.toString();
-    navigate(`/search?${searchQuery}`);
-    const res = await fetch(
-      `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
-    );
-    const data = await res.json();
-    if (data.data.length < 2) {
-      setShowMore(false);
-    }
-    setListings(data?.data);
   };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const searchTerm = urlParams.get("searchTerm");
-    const type = urlParams.get("type");
-    const parking = urlParams.get("parking");
-    const furnished = urlParams.get("furnished");
-    const offer = urlParams.get("offer");
-    const sort = urlParams.get("sort");
-    const page = urlParams.get("page");
-    const limit = urlParams.get("limit");
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    const typeFromUrl = urlParams.get("type");
+    const parkingFromUrl = urlParams.get("parking");
+    const furnishedFromUrl = urlParams.get("furnished");
+    const offerFromUrl = urlParams.get("offer");
+    const sortFromUrl = urlParams.get("sort");
 
     if (
-      searchTerm ||
-      type ||
-      parking ||
-      furnished ||
-      offer ||
-      sort ||
-      page ||
-      limit
+      searchTermFromUrl ||
+      typeFromUrl ||
+      parkingFromUrl ||
+      furnishedFromUrl ||
+      offerFromUrl ||
+      sortFromUrl
     ) {
-      setFilter({
-        searchTerm: searchTerm || "",
-        type: type || "all",
-        parking: parking || false,
-        furnished: furnished || false,
-        offer: offer || false,
-        sort: sort || "createdAt_desc",
-        page: page || 1,
-        limit: limit || 3,
+      setSidebardata({
+        searchTerm: searchTermFromUrl || "",
+        type: typeFromUrl || "all",
+        parking: parkingFromUrl === "true" ? true : false,
+        furnished: furnishedFromUrl === "true" ? true : false,
+        offer: offerFromUrl === "true" ? true : false,
+        sort: sortFromUrl || "createdAt_desc",
       });
     }
 
     const fetchListings = async () => {
+      setLoading(true);
       setShowMore(false);
-      const apiString =
-        "searchTerm=&type=all&parking=false&furnished=false&offer=false&sort=createdAt_desc&page=1&limit=3";
+      const searchQuery = urlParams.toString();
       const res = await fetch(
-        `${process.env.REACT_APP_API_KEY}listings/get?${apiString}`
+        `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
       );
       const data = await res.json();
-      if (data?.data?.length > 2) {
+      if (data?.data?.length > 8) {
         setShowMore(true);
       } else {
         setShowMore(false);
       }
-      setListings(data.data);
+      setListings(data?.data);
+      setLoading(false);
     };
 
     fetchListings();
-  }, []);
+  }, [window.location.search]);
 
-  const showMoreHandler = async () => {
-    setPage((prevPage) => prevPage + 1);
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams();
+    urlParams.set("searchTerm", sidebardata.searchTerm);
+    urlParams.set("type", sidebardata.type);
+    urlParams.set("parking", sidebardata.parking);
+    urlParams.set("furnished", sidebardata.furnished);
+    urlParams.set("offer", sidebardata.offer);
+    urlParams.set("sort", sidebardata.sort);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
   };
 
-  useEffect(() => {
-    if (page > 1) {
-      const onShowMoreClick = async () => {
-        const apiString = `searchTerm=${filter.searchTerm}&type=${filter.type}&parking=${filter.parking}&furnished=${filter.furnished}&offer=${filter.offer}&sort=${filter.sort}&page=${page}&limit=${limit}`;
-
-        const res = await fetch(
-          `${process.env.REACT_APP_API_KEY}listings/get?${apiString}`
-        );
-        const data = await res.json();
-        if (data.data.length < 3) {
-          setShowMore(false);
-        }
-        setListings((prevListings: any) => [...prevListings, ...data?.data]);
-      };
-
-      onShowMoreClick();
+  const onShowMoreClick = async () => {
+    const numberOfListings = listings?.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set("startIndex", startIndex);
+    const searchQuery = urlParams.toString();
+    const res = await fetch(
+      `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
+    );
+    const data = await res.json();
+    if (data?.data?.length < 9) {
+      setShowMore(false);
     }
-  }, [page]);
-
-  console.log("page", page);
-  console.log("listings", listings);
-  console.log("showMore", showMore);
+    setListings([...listings, ...data?.data]);
+  };
 
   return (
     <Box sx={{ margin: "35px 0 0 0" }}>
-      {isLoading && <OverlayLoader />}
+      {loading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
+          <Box sx={{ position: "absolute" }}>
+            <DotLoader />
+          </Box>
+        </Box>
+      )}
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <Heading sx={{ margin: "0 0 5px 20px" }}>Filters</Heading>
@@ -205,109 +187,121 @@ const SearchPage = () => {
               boxShadow: "rgba(0, 0, 0, 0.1) 0px 0px 10px",
             }}
           >
-            <SubHeading sx={{ marginBottom: "5px" }}>Search</SubHeading>
-            <SearchBar
-              placeholder="Search..."
-              searchText={searchText}
-              handleSearch={handleSearch}
-              value={filter.searchTerm}
-              onChange={handleSearch}
-              color="#fff"
-            />
-            <Box sx={{ marginTop: "10px" }}>
-              <RadioGroup
-                name="type"
-                value={filter.type}
-                onChange={(event) => {
-                  setFilter({ ...filter, type: event.target.value });
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <FormControlLabel
-                    value="all"
-                    control={<Radio />}
-                    label="Rent & Sell"
-                  />
-                  <FormControlLabel
-                    value="rent"
-                    control={<Radio />}
-                    label="Rent"
-                  />
-                  <FormControlLabel
-                    value="sale"
-                    control={<Radio />}
-                    label="Sell"
-                  />
-                </Box>
-              </RadioGroup>
-            </Box>
-            <Box sx={{ margin: "0 0 5px 0" }}>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Offer"
-                name="offer"
-                checked={filter.offer}
-                onChange={() => {
-                  setFilter({ ...filter, offer: !filter.offer });
-                }}
+            <form onSubmit={handleSubmit}>
+              <SubHeading sx={{ marginBottom: "5px" }}>Search</SubHeading>
+              <SearchBar
+                placeholder="Search..."
+                searchText={searchText}
+                handleSearch={handleSearch}
+                value={sidebardata.searchTerm}
+                onChange={handleSearch}
+                color="#fff"
               />
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Parking"
-                name="parking"
-                checked={filter.parking}
-                onChange={() => {
-                  setFilter({ ...filter, parking: !filter.parking });
+              <Box sx={{ marginTop: "10px" }}>
+                <RadioGroup
+                  name="type"
+                  value={sidebardata.type}
+                  onChange={(event) => {
+                    setSidebardata({
+                      ...sidebardata,
+                      type: event.target.value,
+                    });
+                  }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <FormControlLabel
+                      value="all"
+                      control={<Radio />}
+                      label="Rent & Sell"
+                    />
+                    <FormControlLabel
+                      value="rent"
+                      control={<Radio />}
+                      label="Rent"
+                    />
+                    <FormControlLabel
+                      value="sale"
+                      control={<Radio />}
+                      label="Sell"
+                    />
+                  </Box>
+                </RadioGroup>
+              </Box>
+              <Box sx={{ margin: "0 0 5px 0" }}>
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Offer"
+                  name="offer"
+                  checked={sidebardata.offer}
+                  onChange={() => {
+                    setSidebardata({
+                      ...sidebardata,
+                      offer: !sidebardata.offer,
+                    });
+                  }}
+                />
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Parking"
+                  name="parking"
+                  checked={sidebardata.parking}
+                  onChange={() => {
+                    setSidebardata({
+                      ...sidebardata,
+                      parking: !sidebardata.parking,
+                    });
+                  }}
+                />
+                <FormControlLabel
+                  control={<Checkbox />}
+                  label="Furnished"
+                  name="furnished"
+                  checked={sidebardata.furnished}
+                  onChange={() => {
+                    setSidebardata({
+                      ...sidebardata,
+                      furnished: !sidebardata.furnished,
+                    });
+                  }}
+                />
+              </Box>
+              <SubHeading sx={{ margin: "5px 0" }}>Sort</SubHeading>
+              <SelectInput
+                styles={{ width: "100%" }}
+                name="sort"
+                value={sidebardata.sort}
+                onChange={(event: any) => {
+                  setSidebardata({
+                    ...sidebardata,
+                    sort: event.target.value,
+                  });
                 }}
-              />
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Furnished"
-                name="furnished"
-                checked={filter.furnished}
-                onChange={() => {
-                  setFilter({ ...filter, furnished: !filter.furnished });
-                }}
-              />
-            </Box>
-            <SubHeading sx={{ margin: "5px 0" }}>Sort</SubHeading>
-            <SelectInput
-              styles={{ width: "100%" }}
-              name="sort"
-              value={filter.sort}
-              onChange={(event: any) => {
-                setFilter({ ...filter, sort: event.target.value });
-              }}
-              label=""
-              data={sortTypes}
-              options={sortTypes?.map((copyType: any, index: number) => ({
-                ...copyType,
-                value: copyType.value,
-                label: copyType.name,
-              }))}
-            ></SelectInput>
-            <Box>
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                sx={{
+                label=""
+                data={sortTypes}
+                options={sortTypes?.map((copyType: any, index: number) => ({
+                  ...copyType,
+                  value: copyType.value,
+                  label: copyType.name,
+                }))}
+              ></SelectInput>
+              <button
+                style={{
                   padding: "5px 30px",
-                  textTransform: "capitalize",
                   margin: "20px 0 5px 0",
                   background: "#334155",
                   height: "40px",
                   color: "#fff",
                   lineHeight: "0",
-                  "&:hover": {
-                    background: "#334155",
-                  },
+                  border: "none",
+                  borderRadius: "5px",
+                  width: "100%",
+                  cursor: "pointer",
+                  fontWeight: "bold",
                 }}
-                onClick={SearchHandler}
               >
                 Search
-              </Button>
-            </Box>
+              </button>
+            </form>
           </Box>
         </Grid>
         <Grid item xs={9}>
@@ -318,7 +312,7 @@ const SearchPage = () => {
           >
             <Heading sx={{ margin: "0 0 5px 0" }}>Listing Results</Heading>
             <Grid container spacing={2}>
-              {listings?.length === 0 ? (
+              {!loading && listings?.length === 0 ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -338,8 +332,8 @@ const SearchPage = () => {
                 </Box>
               ) : (
                 <>
-                  {listings?.map((item: any) => (
-                    <Grid item xs={4} key={item._id}>
+                  {listings?.map((item: any, index: number) => (
+                    <Grid item xs={4} key={index}>
                       <Box
                         sx={{
                           background: "#fff",
@@ -486,16 +480,17 @@ const SearchPage = () => {
                 </>
               )}
             </Grid>
-            <Button
-              onClick={showMoreHandler}
-              color="success"
-              sx={{ marginBottom: "20px" }}
-            >
-              Show More
-            </Button>
+            {showMore && (
+              <Button
+                onClick={onShowMoreClick}
+                color="success"
+                sx={{ marginBottom: "20px" }}
+              >
+                Show More
+              </Button>
+            )}
           </Box>
         </Grid>
-        {/* <Grid item xs={2}></Grid> */}
       </Grid>
     </Box>
   );

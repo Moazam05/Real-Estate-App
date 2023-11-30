@@ -80,24 +80,31 @@ const Header = () => {
   const searchText = useTypedSelector(selectedSearchText);
 
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (event: any) => {
     let value = event.target.value.toLowerCase();
     dispatch(setSearchText(value));
+    setSearchTerm(value);
+  };
 
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("searchText", searchText);
+    urlParams.set("searchTerm", searchTerm);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const searchTextFromUrl = urlParams.get("searchText");
+    const searchTextFromUrl = urlParams.get("searchTerm");
     if (searchTextFromUrl) {
       dispatch(setSearchText(searchTextFromUrl));
+      setSearchTerm(searchTextFromUrl);
     }
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [window.location.search]);
 
   return (
     <header>
@@ -129,15 +136,15 @@ const Header = () => {
             </Box>
           </Grid>
           <Grid item xs={4}>
-            <Box>
+            <form onSubmit={handleSubmit}>
               <SearchBar
                 placeholder="Search..."
                 searchText={searchText}
                 handleSearch={handleSearch}
-                value={searchText}
+                value={searchTerm}
                 onChange={handleSearch}
               />
-            </Box>
+            </form>
           </Grid>
           <Grid item xs={4}>
             <Box
