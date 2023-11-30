@@ -64,7 +64,7 @@ const SearchPage = () => {
   const dispatch = useDispatch();
   const searchText = useTypedSelector(selectedSearchText);
 
-  const [sidebardata, setSidebardata] = useState<any>({
+  const [sideBarData, setSideBarData] = useState<any>({
     searchTerm: "",
     type: "all",
     parking: false,
@@ -72,14 +72,15 @@ const SearchPage = () => {
     offer: false,
     sort: "createdAt_desc",
   });
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState<any>([]);
   const [showMore, setShowMore] = useState(false);
 
   const handleSearch = (event: any) => {
     let value = event.target.value.toLowerCase();
-    setSidebardata({ ...sidebardata, searchTerm: value });
+    setSideBarData({ ...sideBarData, searchTerm: value });
     dispatch(setSearchText(value));
   };
 
@@ -100,7 +101,7 @@ const SearchPage = () => {
       offerFromUrl ||
       sortFromUrl
     ) {
-      setSidebardata({
+      setSideBarData({
         searchTerm: searchTermFromUrl || "",
         type: typeFromUrl || "all",
         parking: parkingFromUrl === "true" ? true : false,
@@ -118,7 +119,7 @@ const SearchPage = () => {
         `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
       );
       const data = await res.json();
-      if (data?.data?.length > 8) {
+      if (data?.data?.length > 2) {
         setShowMore(true);
       } else {
         setShowMore(false);
@@ -128,32 +129,31 @@ const SearchPage = () => {
     };
 
     fetchListings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.search]);
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const urlParams = new URLSearchParams();
-    urlParams.set("searchTerm", sidebardata.searchTerm);
-    urlParams.set("type", sidebardata.type);
-    urlParams.set("parking", sidebardata.parking);
-    urlParams.set("furnished", sidebardata.furnished);
-    urlParams.set("offer", sidebardata.offer);
-    urlParams.set("sort", sidebardata.sort);
+    urlParams.set("searchTerm", sideBarData.searchTerm);
+    urlParams.set("type", sideBarData.type);
+    urlParams.set("parking", sideBarData.parking);
+    urlParams.set("furnished", sideBarData.furnished);
+    urlParams.set("offer", sideBarData.offer);
+    urlParams.set("sort", sideBarData.sort);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
 
   const onShowMoreClick = async () => {
-    const numberOfListings = listings?.length;
-    const startIndex = numberOfListings;
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set("startIndex", startIndex);
+    urlParams.set("page", (page + 1).toString());
     const searchQuery = urlParams.toString();
     const res = await fetch(
       `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
     );
     const data = await res.json();
-    if (data?.data?.length < 9) {
+    if (data?.data?.length < 3) {
       setShowMore(false);
     }
     setListings([...listings, ...data?.data]);
@@ -171,7 +171,7 @@ const SearchPage = () => {
           }}
         >
           <Box sx={{ position: "absolute" }}>
-            <DotLoader />
+            <DotLoader color="#334155" />
           </Box>
         </Box>
       )}
@@ -193,17 +193,17 @@ const SearchPage = () => {
                 placeholder="Search..."
                 searchText={searchText}
                 handleSearch={handleSearch}
-                value={sidebardata.searchTerm}
+                value={sideBarData.searchTerm}
                 onChange={handleSearch}
                 color="#fff"
               />
               <Box sx={{ marginTop: "10px" }}>
                 <RadioGroup
                   name="type"
-                  value={sidebardata.type}
+                  value={sideBarData.type}
                   onChange={(event) => {
-                    setSidebardata({
-                      ...sidebardata,
+                    setSideBarData({
+                      ...sideBarData,
                       type: event.target.value,
                     });
                   }}
@@ -232,11 +232,11 @@ const SearchPage = () => {
                   control={<Checkbox />}
                   label="Offer"
                   name="offer"
-                  checked={sidebardata.offer}
+                  checked={sideBarData.offer}
                   onChange={() => {
-                    setSidebardata({
-                      ...sidebardata,
-                      offer: !sidebardata.offer,
+                    setSideBarData({
+                      ...sideBarData,
+                      offer: !sideBarData.offer,
                     });
                   }}
                 />
@@ -244,11 +244,11 @@ const SearchPage = () => {
                   control={<Checkbox />}
                   label="Parking"
                   name="parking"
-                  checked={sidebardata.parking}
+                  checked={sideBarData.parking}
                   onChange={() => {
-                    setSidebardata({
-                      ...sidebardata,
-                      parking: !sidebardata.parking,
+                    setSideBarData({
+                      ...sideBarData,
+                      parking: !sideBarData.parking,
                     });
                   }}
                 />
@@ -256,11 +256,11 @@ const SearchPage = () => {
                   control={<Checkbox />}
                   label="Furnished"
                   name="furnished"
-                  checked={sidebardata.furnished}
+                  checked={sideBarData.furnished}
                   onChange={() => {
-                    setSidebardata({
-                      ...sidebardata,
-                      furnished: !sidebardata.furnished,
+                    setSideBarData({
+                      ...sideBarData,
+                      furnished: !sideBarData.furnished,
                     });
                   }}
                 />
@@ -269,10 +269,10 @@ const SearchPage = () => {
               <SelectInput
                 styles={{ width: "100%" }}
                 name="sort"
-                value={sidebardata.sort}
+                value={sideBarData.sort}
                 onChange={(event: any) => {
-                  setSidebardata({
-                    ...sidebardata,
+                  setSideBarData({
+                    ...sideBarData,
                     sort: event.target.value,
                   });
                 }}

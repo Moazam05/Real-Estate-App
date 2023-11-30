@@ -102,7 +102,7 @@ const ViewListing = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {data?.data?.type}
+                  {data?.data?.type === "rent" ? "Rent" : "Sale"}
                 </Box>
                 {data?.data?.discountedPrice > 0 && (
                   <>
