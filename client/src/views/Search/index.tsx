@@ -65,6 +65,11 @@ const SearchPage = () => {
   const dispatch = useDispatch();
   const searchText = useTypedSelector(selectedSearchText);
 
+  const [listings, setListings] = useState<any>([]);
+  const [showMore, setShowMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(3);
+
   const [query, setQuery] = useState<any>("");
   const [filter, setFilter] = useState<any>({
     searchTerm: searchText,
@@ -84,6 +89,7 @@ const SearchPage = () => {
   };
 
   const SearchHandler = async () => {
+    setPage(1);
     const urlParams = new URLSearchParams();
     urlParams.set("searchTerm", filter.searchTerm);
     urlParams.set("type", filter.type);
@@ -91,9 +97,18 @@ const SearchPage = () => {
     urlParams.set("furnished", filter.furnished);
     urlParams.set("offer", filter.offer);
     urlParams.set("sort", filter.sort);
+    urlParams.set("page", page.toString());
+    urlParams.set("limit", limit.toString());
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
-    setQuery(searchQuery);
+    const res = await fetch(
+      `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
+    );
+    const data = await res.json();
+    if (data.data.length < 2) {
+      setShowMore(false);
+    }
+    setListings(data?.data);
   };
 
   useEffect(() => {
@@ -104,8 +119,19 @@ const SearchPage = () => {
     const furnished = urlParams.get("furnished");
     const offer = urlParams.get("offer");
     const sort = urlParams.get("sort");
+    const page = urlParams.get("page");
+    const limit = urlParams.get("limit");
 
-    if (searchTerm || type || parking || furnished || offer || sort) {
+    if (
+      searchTerm ||
+      type ||
+      parking ||
+      furnished ||
+      offer ||
+      sort ||
+      page ||
+      limit
+    ) {
       setFilter({
         searchTerm: searchTerm || "",
         type: type || "all",
@@ -113,9 +139,56 @@ const SearchPage = () => {
         furnished: furnished || false,
         offer: offer || false,
         sort: sort || "createdAt_desc",
+        page: page || 1,
+        limit: limit || 3,
       });
     }
+
+    const fetchListings = async () => {
+      setShowMore(false);
+      const apiString =
+        "searchTerm=&type=all&parking=false&furnished=false&offer=false&sort=createdAt_desc&page=1&limit=3";
+      const res = await fetch(
+        `${process.env.REACT_APP_API_KEY}listings/get?${apiString}`
+      );
+      const data = await res.json();
+      if (data?.data?.length > 2) {
+        setShowMore(true);
+      } else {
+        setShowMore(false);
+      }
+      setListings(data.data);
+    };
+
+    fetchListings();
   }, []);
+
+  const showMoreHandler = async () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  useEffect(() => {
+    if (page > 1) {
+      const onShowMoreClick = async () => {
+        const apiString = `searchTerm=${filter.searchTerm}&type=${filter.type}&parking=${filter.parking}&furnished=${filter.furnished}&offer=${filter.offer}&sort=${filter.sort}&page=${page}&limit=${limit}`;
+
+        const res = await fetch(
+          `${process.env.REACT_APP_API_KEY}listings/get?${apiString}`
+        );
+        const data = await res.json();
+        if (data.data.length < 3) {
+          setShowMore(false);
+        }
+        setListings((prevListings: any) => [...prevListings, ...data?.data]);
+      };
+
+      onShowMoreClick();
+    }
+  }, [page]);
+
+  console.log("page", page);
+  console.log("listings", listings);
+  console.log("showMore", showMore);
 
   return (
     <Box sx={{ margin: "35px 0 0 0" }}>
@@ -245,7 +318,7 @@ const SearchPage = () => {
           >
             <Heading sx={{ margin: "0 0 5px 0" }}>Listing Results</Heading>
             <Grid container spacing={2}>
-              {data?.data?.length === 0 ? (
+              {listings?.length === 0 ? (
                 <Box
                   sx={{
                     display: "flex",
@@ -265,7 +338,7 @@ const SearchPage = () => {
                 </Box>
               ) : (
                 <>
-                  {data?.data?.map((item: any) => (
+                  {listings?.map((item: any) => (
                     <Grid item xs={4} key={item._id}>
                       <Box
                         sx={{
@@ -413,6 +486,13 @@ const SearchPage = () => {
                 </>
               )}
             </Grid>
+            <Button
+              onClick={showMoreHandler}
+              color="success"
+              sx={{ marginBottom: "20px" }}
+            >
+              Show More
+            </Button>
           </Box>
         </Grid>
         {/* <Grid item xs={2}></Grid> */}
