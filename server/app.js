@@ -15,6 +15,8 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 
+const __dirname = path.resolve();
+
 const app = express();
 app.use(cors(corsOptions));
 
@@ -35,6 +37,13 @@ app.get("/", (req, res) => {
 // ROUTES
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/listings", listingRouter);
+
+// Production Build
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
