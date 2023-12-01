@@ -102,7 +102,7 @@ exports.updateListing = catchAsync(async (req, res, next) => {
 exports.getListings = catchAsync(async (req, res, next) => {
   // 1) Pagination
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 3;
+  const limit = req.query.limit * 1 || 6;
   const skip = (page - 1) * limit;
 
   // 2) Sorting

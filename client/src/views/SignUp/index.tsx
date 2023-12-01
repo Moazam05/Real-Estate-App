@@ -235,7 +235,7 @@ const SignUp = () => {
                           alignItems: "center",
                         }}
                       >
-                        Don't Have an account?
+                        Already have an account?
                         <Box
                           sx={{
                             marginLeft: "5px",

@@ -119,7 +119,7 @@ const SearchPage = () => {
         `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
       );
       const data = await res.json();
-      if (data?.data?.length > 2) {
+      if (data?.data?.length > 5) {
         setShowMore(true);
       } else {
         setShowMore(false);
@@ -153,7 +153,7 @@ const SearchPage = () => {
       `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
     );
     const data = await res.json();
-    if (data?.data?.length < 3) {
+    if (data?.data?.length < 6) {
       setShowMore(false);
     }
     setListings([...listings, ...data?.data]);

@@ -93,10 +93,8 @@ const CreateListing = () => {
   };
 
   const UploadHandler = () => {
-    // if (imageUrls.length < 3) {
     if (listingImages.length === 0)
       return setImageError("Please select an image");
-    // }
 
     if (listingImages.length + imageUrls.length < 7) {
       setImageLoading(true);
