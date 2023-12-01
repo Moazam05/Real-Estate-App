@@ -71,9 +71,9 @@ const PrimaryPhoneInput = ({
         sx={{
           width: "100% !important",
           background: "#fff",
-          height: "50px",
+          height: "49px",
           "& .MuiOutlinedInput-root": {
-            height: "50px !important",
+            height: "49px !important",
           },
           "& .MuiFormHelperText-root.Mui-error": {
             margin: "0",

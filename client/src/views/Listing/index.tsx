@@ -387,11 +387,6 @@ const CreateListing = () => {
                           </Box>
                           <Box
                             sx={{
-                              height: "85px",
-                              marginTop:
-                                errors.phoneNumber && touched.phoneNumber
-                                  ? "0"
-                                  : "15px",
                               width: "50%",
                             }}
                           >
@@ -555,14 +550,14 @@ const CreateListing = () => {
                           >
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                               <FormControlLabel
-                                value="Rent"
+                                value="rent"
                                 control={<Radio />}
                                 label="Rent"
                               />
                               <FormControlLabel
-                                value="Sell"
+                                value="sale"
                                 control={<Radio />}
-                                label="Sell"
+                                label="Sale"
                               />
                             </Box>
                           </RadioGroup>

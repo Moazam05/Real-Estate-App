@@ -212,7 +212,7 @@ const SearchPage = () => {
                     <FormControlLabel
                       value="all"
                       control={<Radio />}
-                      label="Rent & Sell"
+                      label="Rent & Sale"
                     />
                     <FormControlLabel
                       value="rent"

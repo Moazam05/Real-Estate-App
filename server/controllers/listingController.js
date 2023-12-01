@@ -119,7 +119,7 @@ exports.getListings = catchAsync(async (req, res, next) => {
       sort[sortQuery[0]] = 1;
     }
   } else {
-    sort = { createdAt: -1 };
+    sort = { createdAt: 1 };
   }
 
   // 3) Filtering based on searchTerm

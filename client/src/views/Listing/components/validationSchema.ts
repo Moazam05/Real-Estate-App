@@ -4,7 +4,10 @@ export const listingSchema = Yup.object().shape({
   name: Yup.string().required("Name is required").nullable(),
   description: Yup.string().required("Description is required").nullable(),
   address: Yup.string().required("Address is required").nullable(),
-  phoneNumber: Yup.string().required("Contact number is required").nullable(),
+  phoneNumber: Yup.string()
+    .required("Contact number is required")
+    .min(12, "Contact number is required")
+    .nullable(),
   regularPrice: Yup.number()
     .required("Regular price is required")
     .nullable()

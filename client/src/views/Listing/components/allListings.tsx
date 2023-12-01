@@ -134,7 +134,7 @@ const AllListings = () => {
                         <img
                           src={item?.imageUrls[0]}
                           width={100}
-                          height={127}
+                          height={140}
                           alt="listing"
                           style={{ borderRadius: "5px" }}
                         />
@@ -217,12 +217,43 @@ const AllListings = () => {
                             display: "flex",
                             justifyContent: "end",
                             gap: 1,
+                            marginTop: "5px",
+                            alignItems: "center",
                           }}
                         >
                           <Box>Date:</Box>
                           <Box sx={{ fontWeight: 600 }}>
                             {convertToFormattedDate(item?.createdAt)}
                           </Box>
+                          <Box>
+                            {item?.type === "rent" ? (
+                              <Box
+                                sx={{
+                                  background: "#0078a5",
+                                  fontSize: "12px",
+                                  color: "#fff",
+                                  borderRadius: "50%",
+                                  padding: "5px 10px",
+                                  display: "inline-block",
+                                }}
+                              >
+                                Rent
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  background: "#7fb742",
+                                  fontSize: "12px",
+                                  color: "#fff",
+                                  borderRadius: "50%",
+                                  padding: "5px 10px",
+                                  display: "inline-block",
+                                }}
+                              >
+                                Sale
+                              </Box>
+                            )}
+                          </Box>{" "}
                         </Box>
                       </Grid>
                     </Box>
