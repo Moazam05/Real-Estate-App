@@ -116,7 +116,7 @@ const SearchPage = () => {
       setShowMore(false);
       const searchQuery = urlParams.toString();
       const res = await fetch(
-        `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
+        `${process.env.REACT_APP_API_URL}listings/get?${searchQuery}`
       );
       const data = await res.json();
       if (data?.data?.length > 5) {
@@ -150,7 +150,7 @@ const SearchPage = () => {
     urlParams.set("page", (page + 1).toString());
     const searchQuery = urlParams.toString();
     const res = await fetch(
-      `${process.env.REACT_APP_API_KEY}listings/get?${searchQuery}`
+      `${process.env.REACT_APP_API_URL}listings/get?${searchQuery}`
     );
     const data = await res.json();
     if (data?.data?.length < 6) {
