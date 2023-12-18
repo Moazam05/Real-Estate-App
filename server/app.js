@@ -10,11 +10,9 @@ const globalErrorHandler = require("./controllers/errorController");
 const userRouter = require("./routes/userRoutes");
 const listingRouter = require("./routes/listingRoutes");
 
-const production = process.env.NODE_ENV === "production";
-
 const corsOptions = {
-  origin: production ? "*" : "http://localhost:3000",
-  methods: production ? "*" : ["GET", "POST", "PUT", "DELETE"],
+  origin: "*",
+  methods: "*",
   allowedHeaders: "*",
 };
 
