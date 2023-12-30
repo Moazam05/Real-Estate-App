@@ -26,6 +26,7 @@ const AllListings = () => {
   const navigate = useNavigate();
   const userId = useTypedSelector(selectedUserId);
 
+  const [selectedListing, setSelectedListing] = useState<any>({});
   const [toast, setToast] = useState({
     message: "",
     appearence: false,
@@ -69,8 +70,6 @@ const AllListings = () => {
       });
     }
   };
-
-  console.log("data", data?.data);
 
   return (
     <Box sx={{ marginTop: "50px" }}>
@@ -187,18 +186,35 @@ const AllListings = () => {
                               variant="outlined"
                               color="error"
                               sx={{ textTransform: "capitalize" }}
-                              startIcon={<MdDeleteOutline />}
+                              startIcon={
+                                selectedListing === item?._id &&
+                                isDeleting ? null : (
+                                  <MdDeleteOutline />
+                                )
+                              }
                               disabled={isDeleting}
                               onClick={() => {
                                 DeleteListingHandler(item?._id);
+                                setSelectedListing(item?._id);
                               }}
                             >
-                              {isDeleting ? (
-                                <DotLoader color="#fff" size={12} />
+                              {selectedListing === item?._id && isDeleting ? (
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    marginTop: "7px",
+                                    height: "20px",
+                                  }}
+                                >
+                                  <DotLoader color="#f44336" size={12} />
+                                </Box>
                               ) : (
                                 "Delete"
                               )}
                             </Button>
+
                             <Button
                               variant="outlined"
                               color="success"

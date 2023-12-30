@@ -75,7 +75,7 @@ const CreateListing = () => {
     furnished: false,
     parking: false,
     offer: false,
-    type: "Rent",
+    type: "rent",
     files: [],
   });
   const [listingImages, setListingImages] = useState<any[]>([]);
