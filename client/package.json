@@ -37,8 +37,8 @@
     "yup": "^1.3.2"
   },
   "scripts": {
-    "start": "react-scripts --openssl-legacy-provider start",
-    "build": "react-scripts --openssl-legacy-provider build",
+    "start": "react-scripts --openssl-legacy-provider start --env=development",
+    "build": "react-scripts --openssl-legacy-provider build --env=production",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
