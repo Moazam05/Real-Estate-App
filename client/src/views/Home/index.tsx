@@ -61,9 +61,31 @@ const Home = () => {
       }}
     >
       {(offerLoading || rentLoading || saleLoading) && <OverlayLoader />}
-      <Grid container spacing={2}>
-        <Grid item xs={2}></Grid>
-        <Grid item xs={12} md={6} lg={4}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          "@media (max-width: 900px)": {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        }}
+      >
+        <Grid
+          xs={1}
+          item
+          md={1}
+          lg={2}
+          sx={{
+            "@media (max-width: 900px)": {
+              display: "none",
+            },
+          }}
+        ></Grid>
+
+        <Grid item xs={10} md={5} lg={4}>
           <Heading
             sx={{
               fontSize: "45px",
@@ -110,7 +132,7 @@ const Home = () => {
           </Box>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={10} md={5} lg={4}>
           <Box
             sx={{
               width: "100%",
@@ -135,7 +157,17 @@ const Home = () => {
           </Box>
         </Grid>
 
-        <Grid item xs={2}></Grid>
+        <Grid
+          item
+          xs={1}
+          md={1}
+          lg={2}
+          sx={{
+            "@media (max-width: 900px)": {
+              display: "none",
+            },
+          }}
+        ></Grid>
       </Grid>
 
       <Grid container sx={{ margin: "75px 0" }}>
