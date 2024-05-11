@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { Heading, SubHeading } from "../../components/Heading";
 // Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";
-import SwiperCore from "swiper";
-import { Navigation } from "swiper/modules";
-import "swiper/css/bundle";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css/free-mode";
+import "swiper/css";
+// React Icons
 import { PiShootingStarThin } from "react-icons/pi";
 import { useSearchListingsQuery } from "../../redux/api/listingApiSlice";
 import OverlayLoader from "../../components/Spinner/OverlayLoader";
@@ -17,6 +18,18 @@ import { FaLocationDot } from "react-icons/fa6";
 import { FaBed } from "react-icons/fa";
 import { FaBath } from "react-icons/fa";
 import { thousandSeparatorNumber } from "../../utils";
+
+const Banner = {
+  width: "100%",
+  height: "fit-content",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  border: "none",
+  borderRadius: "12px",
+  background: "none",
+  cursor: "pointer",
+};
 
 const iconStyle = {
   display: "flex",
@@ -36,7 +49,6 @@ const images = [
 
 const Home = () => {
   const navigate = useNavigate();
-  SwiperCore.use([Navigation]);
 
   const offerString = "offer=true&limit=4";
   const rentString = "type=rent&limit=4";
@@ -170,17 +182,39 @@ const Home = () => {
         ></Grid>
       </Grid>
 
-      <Grid container sx={{ margin: "75px 0" }}>
+      <Grid
+        container
+        sx={{
+          margin: "75px 0",
+          "@media (max-width: 600px)": {
+            margin: "50px 0",
+          },
+        }}
+      >
         <Grid item xs={12}>
           <Box>
-            <Swiper navigation={true}>
+            <Swiper
+              slidesPerView={1}
+              spaceBetween={30}
+              centeredSlides={true}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              pagination={{
+                clickable: true,
+              }}
+              modules={[Autoplay, Pagination]}
+              speed={1500}
+              effect="fade"
+            >
               {images?.map((image: any) => (
-                <SwiperSlide key={image}>
+                <SwiperSlide key={image} style={Banner}>
                   <img
                     src={image}
                     alt="listing"
                     width="100%"
-                    height={500}
+                    height={600}
                     style={{ objectFit: "cover" }}
                   />
                 </SwiperSlide>
@@ -190,7 +224,16 @@ const Home = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2} sx={{ marginBottom: "100px" }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          marginBottom: "100px",
+          "@media (max-width: 600px)": {
+            marginBottom: "30px",
+          },
+        }}
+      >
         <Grid item xs={1} md={1}></Grid>
         <Grid item xs={10} md={10}>
           <Heading sx={{ color: "#475569" }}>Recent Offer</Heading>
@@ -213,27 +256,12 @@ const Home = () => {
           <Box sx={{ margin: "15px 0" }}>
             <Grid container spacing={2}>
               {offerData?.data?.map((item: any, index: number) => (
-                <Grid
-                  item
-                  xs={12}
-                  md={4}
-                  key={index}
-                  // sx={{
-                  //   "@media (max-width: 678px)": {
-                  //     display: "flex",
-                  //     flexDirection: "column",
-                  //     alignItems: "center",
-                  //     justifyContent: "center",
-                  //     flexWrap: "wrap",
-                  //   },
-                  // }}
-                >
+                <Grid item xs={12} md={4} key={index}>
                   <Box key={index}>
                     <Box
                       sx={{
                         background: "#fff",
                         borderRadius: "5px",
-                        // width: "340px",
                         marginBottom: "20px",
                         cursor: "pointer",
                       }}
