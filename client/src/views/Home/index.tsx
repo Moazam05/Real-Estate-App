@@ -52,15 +52,63 @@ const Home = () => {
     useSearchListingsQuery(saleString);
 
   return (
-    <Box sx={{ margin: "100px 0 0 0" }}>
+    <Box
+      sx={{
+        margin: "100px 0 0 0",
+        "@media (max-width: 992px)": {
+          margin: "50px 0 0 0",
+        },
+      }}
+    >
       {(offerLoading || rentLoading || saleLoading) && <OverlayLoader />}
-      <Grid container spacing={2}>
-        <Grid item xs={2}></Grid>
-        <Grid item xs={4}>
-          <Heading sx={{ fontSize: "45px", color: "#334155" }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          "@media (max-width: 1200px)": {
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        }}
+      >
+        <Grid
+          item
+          xs={2}
+          sx={{
+            "@media (max-width: 1200px)": {
+              display: "none",
+            },
+          }}
+        ></Grid>
+        <Grid item xs={12} md={6} lg={4}>
+          <Heading
+            sx={{
+              fontSize: "45px",
+              color: "#334155",
+              "@media (min-width: 993px) and (max-width: 1200px)": {
+                fontSize: "35px",
+              },
+              "@media (max-width: 992px)": {
+                fontSize: "35px",
+              },
+            }}
+          >
             Find your next <span style={{ color: "#64748b" }}>Perfect</span>
           </Heading>
-          <Heading sx={{ fontSize: "45px", color: "#334155" }}>
+          <Heading
+            sx={{
+              fontSize: "45px",
+              color: "#334155",
+              "@media (min-width: 993px) and (max-width: 1200px)": {
+                fontSize: "35px",
+              },
+              "@media (max-width: 992px)": {
+                fontSize: "35px",
+              },
+            }}
+          >
             place with ease
           </Heading>
           <SubHeading sx={{ margin: "20px 0", color: "#64748b" }}>
@@ -86,12 +134,16 @@ const Home = () => {
             <PiShootingStarThin size={25} color="#103e4b" /> Let's Start now...
           </Box>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={6} lg={4}>
           <Box
             sx={{
               width: "100%",
               height: "350px",
               borderRadius: "5px",
+              "@media (max-width: 600px)": {
+                height: "250px",
+                margin: "20px auto",
+              },
             }}
           >
             <img
@@ -107,7 +159,15 @@ const Home = () => {
           </Box>
         </Grid>
 
-        <Grid item xs={2}></Grid>
+        <Grid
+          item
+          xs={2}
+          sx={{
+            "@media (max-width: 1200px)": {
+              display: "none",
+            },
+          }}
+        ></Grid>
       </Grid>
 
       <Grid container sx={{ margin: "75px 0" }}>
