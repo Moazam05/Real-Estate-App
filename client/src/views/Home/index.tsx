@@ -216,6 +216,7 @@ const Home = () => {
                     width="100%"
                     height={600}
                     style={{ objectFit: "cover" }}
+                    className="swiper-lazy"
                   />
                 </SwiperSlide>
               ))}
@@ -230,7 +231,7 @@ const Home = () => {
         sx={{
           marginBottom: "100px",
           "@media (max-width: 600px)": {
-            marginBottom: "30px",
+            marginBottom: "10px",
           },
         }}
       >
