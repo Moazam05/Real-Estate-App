@@ -61,35 +61,13 @@ const Home = () => {
       }}
     >
       {(offerLoading || rentLoading || saleLoading) && <OverlayLoader />}
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          "@media (max-width: 1200px)": {
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        }}
-      >
-        <Grid
-          item
-          xs={2}
-          sx={{
-            "@media (max-width: 1200px)": {
-              display: "none",
-            },
-          }}
-        ></Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={2}></Grid>
         <Grid item xs={12} md={6} lg={4}>
           <Heading
             sx={{
               fontSize: "45px",
               color: "#334155",
-              "@media (min-width: 993px) and (max-width: 1200px)": {
-                fontSize: "35px",
-              },
               "@media (max-width: 992px)": {
                 fontSize: "35px",
               },
@@ -101,9 +79,6 @@ const Home = () => {
             sx={{
               fontSize: "45px",
               color: "#334155",
-              "@media (min-width: 993px) and (max-width: 1200px)": {
-                fontSize: "35px",
-              },
               "@media (max-width: 992px)": {
                 fontSize: "35px",
               },
@@ -134,6 +109,7 @@ const Home = () => {
             <PiShootingStarThin size={25} color="#103e4b" /> Let's Start now...
           </Box>
         </Grid>
+
         <Grid item xs={12} md={6} lg={4}>
           <Box
             sx={{
@@ -159,15 +135,7 @@ const Home = () => {
           </Box>
         </Grid>
 
-        <Grid
-          item
-          xs={2}
-          sx={{
-            "@media (max-width: 1200px)": {
-              display: "none",
-            },
-          }}
-        ></Grid>
+        <Grid item xs={2}></Grid>
       </Grid>
 
       <Grid container sx={{ margin: "75px 0" }}>
@@ -191,8 +159,8 @@ const Home = () => {
       </Grid>
 
       <Grid container spacing={2} sx={{ marginBottom: "100px" }}>
-        <Grid item xs={1}></Grid>
-        <Grid item xs={10}>
+        <Grid item xs={1} md={1}></Grid>
+        <Grid item xs={10} md={10}>
           <Heading sx={{ color: "#475569" }}>Recent Offer</Heading>
           <Box
             sx={{
@@ -213,146 +181,165 @@ const Home = () => {
           <Box sx={{ margin: "15px 0" }}>
             <Grid container spacing={2}>
               {offerData?.data?.map((item: any, index: number) => (
-                <Grid item xs={4} key={index}>
-                  <Box
-                    sx={{
-                      background: "#fff",
-                      borderRadius: "5px",
-                      // width: "340px",
-                      marginBottom: "20px",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => {
-                      navigate(`/listing/${item._id}`);
-                    }}
-                  >
+                <Grid
+                  item
+                  xs={12}
+                  md={4}
+                  key={index}
+                  // sx={{
+                  //   "@media (max-width: 678px)": {
+                  //     display: "flex",
+                  //     flexDirection: "column",
+                  //     alignItems: "center",
+                  //     justifyContent: "center",
+                  //     flexWrap: "wrap",
+                  //   },
+                  // }}
+                >
+                  <Box key={index}>
                     <Box
                       sx={{
-                        height: "200px",
-                        overflow: "hidden",
-                        position: "relative",
-                        "&:hover img": {
-                          transform: "scale(1.1)",
-                        },
+                        background: "#fff",
+                        borderRadius: "5px",
+                        // width: "340px",
+                        marginBottom: "20px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => {
+                        navigate(`/listing/${item._id}`);
                       }}
                     >
-                      <img
-                        src={item?.imageUrls[0]}
-                        alt="listing"
-                        height="100%"
-                        width="100%"
-                        style={{
-                          objectFit: "cover",
-                          borderRadius: "5px",
-                          transition: "transform 0.3s ease",
-                        }}
-                      />
-                    </Box>
-                    <Box sx={{ padding: "20px 15px" }}>
-                      <SubHeading
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: "18px",
-                          color: "#334155",
-                        }}
-                      >
-                        {item?.name?.length > 30
-                          ? item?.name?.substring(0, 30) + "..."
-                          : item?.name}
-                      </SubHeading>
                       <Box
                         sx={{
-                          marginTop: "5px",
-                          color: "#4b5563",
-                          fontSize: "13px",
-                          fontWeight: 500,
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
+                          height: "200px",
+                          overflow: "hidden",
+                          position: "relative",
+                          "&:hover img": {
+                            transform: "scale(1.1)",
+                          },
                         }}
                       >
-                        <FaLocationDot style={{ color: "#15803d" }} />
-                        {item?.address}
+                        <img
+                          src={item?.imageUrls[0]}
+                          alt="listing"
+                          height="100%"
+                          width="100%"
+                          style={{
+                            objectFit: "cover",
+                            borderRadius: "5px",
+                            transition: "transform 0.3s ease",
+                          }}
+                        />
                       </Box>
-                      <Box
-                        sx={{
-                          marginTop: "5px",
-                          color: "#4b5563",
-                          fontSize: "13px",
-                          height: "55px",
-                        }}
-                      >
-                        {item?.description?.length > 150
-                          ? item?.description?.substring(0, 150) + "..."
-                          : item?.description}
-                      </Box>
-                      <Box
-                        sx={{
-                          color: "#64748b",
-                          fontWeight: 600,
-                          fontSize: "16px",
-                          marginTop: "10px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          gap: "5px",
-                        }}
-                      >
-                        Rs.{" "}
-                        {thousandSeparatorNumber(
-                          item?.regularPrice - item?.discountedPrice
-                        )}{" "}
-                        {item?.type === "rent" ? "/ month" : ""}
-                        <Box>
-                          {item?.type === "rent" ? (
-                            <Box
-                              sx={{
-                                background: "#0078a5",
-                                fontSize: "12px",
-                                color: "#fff",
-                                borderRadius: "50%",
-                                padding: "5px 10px",
-                                display: "inline-block",
-                              }}
-                            >
-                              Rent
-                            </Box>
-                          ) : (
-                            <Box
-                              sx={{
-                                background: "#7fb742",
-                                fontSize: "12px",
-                                color: "#fff",
-                                borderRadius: "50%",
-                                padding: "5px 10px",
-                                display: "inline-block",
-                              }}
-                            >
-                              Sale
-                            </Box>
-                          )}
+                      <Box sx={{ padding: "20px 15px" }}>
+                        <SubHeading
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: "18px",
+                            color: "#334155",
+                          }}
+                        >
+                          {item?.name?.length > 30
+                            ? item?.name?.substring(0, 30) + "..."
+                            : item?.name}
+                        </SubHeading>
+                        <Box
+                          sx={{
+                            marginTop: "5px",
+                            color: "#4b5563",
+                            fontSize: "13px",
+                            fontWeight: 500,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                          }}
+                        >
+                          <FaLocationDot style={{ color: "#15803d" }} />
+                          {item?.address}
                         </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          marginTop: "7px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <Box sx={iconStyle}>
-                            <FaBed
-                              style={{ color: "#334155", marginTop: "3px" }}
-                            />
-                            {item?.bedrooms} Beds
+                        <Box
+                          sx={{
+                            marginTop: "5px",
+                            color: "#4b5563",
+                            fontSize: "13px",
+                            height: "55px",
+                            "@media (max-width: 600px)": {
+                              height: "unset",
+                            },
+                          }}
+                        >
+                          {item?.description?.length > 150
+                            ? item?.description?.substring(0, 150) + "..."
+                            : item?.description}
+                        </Box>
+                        <Box
+                          sx={{
+                            color: "#64748b",
+                            fontWeight: 600,
+                            fontSize: "16px",
+                            marginTop: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: "5px",
+                          }}
+                        >
+                          Rs.{" "}
+                          {thousandSeparatorNumber(
+                            item?.regularPrice - item?.discountedPrice
+                          )}{" "}
+                          {item?.type === "rent" ? "/ month" : ""}
+                          <Box>
+                            {item?.type === "rent" ? (
+                              <Box
+                                sx={{
+                                  background: "#0078a5",
+                                  fontSize: "12px",
+                                  color: "#fff",
+                                  borderRadius: "50%",
+                                  padding: "5px 10px",
+                                  display: "inline-block",
+                                }}
+                              >
+                                Rent
+                              </Box>
+                            ) : (
+                              <Box
+                                sx={{
+                                  background: "#7fb742",
+                                  fontSize: "12px",
+                                  color: "#fff",
+                                  borderRadius: "50%",
+                                  padding: "5px 10px",
+                                  display: "inline-block",
+                                }}
+                              >
+                                Sale
+                              </Box>
+                            )}
                           </Box>
-                          <Box sx={iconStyle}>
-                            <FaBath
-                              style={{ color: "#334155", marginTop: "3px" }}
-                            />
-                            {item?.bathrooms} Baths
+                        </Box>
+                        <Box
+                          sx={{
+                            marginTop: "7px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Box sx={{ display: "flex", gap: 1 }}>
+                            <Box sx={iconStyle}>
+                              <FaBed
+                                style={{ color: "#334155", marginTop: "3px" }}
+                              />
+                              {item?.bedrooms} Beds
+                            </Box>
+                            <Box sx={iconStyle}>
+                              <FaBath
+                                style={{ color: "#334155", marginTop: "3px" }}
+                              />
+                              {item?.bathrooms} Baths
+                            </Box>
                           </Box>
                         </Box>
                       </Box>
@@ -385,7 +372,7 @@ const Home = () => {
           <Box sx={{ margin: "15px 0" }}>
             <Grid container spacing={2}>
               {rentData?.data?.map((item: any, index: number) => (
-                <Grid item xs={4} key={index}>
+                <Grid item xs={12} md={4} key={index}>
                   <Box
                     sx={{
                       background: "#fff",
@@ -451,6 +438,9 @@ const Home = () => {
                           color: "#4b5563",
                           fontSize: "13px",
                           height: "55px",
+                          "@media (max-width: 600px)": {
+                            height: "unset",
+                          },
                         }}
                       >
                         {item?.description?.length > 150
@@ -553,7 +543,7 @@ const Home = () => {
           <Box sx={{ margin: "15px 0" }}>
             <Grid container spacing={2}>
               {saleData?.data?.map((item: any, index: number) => (
-                <Grid item xs={4} key={index}>
+                <Grid item xs={12} md={4} key={index}>
                   <Box
                     sx={{
                       background: "#fff",
@@ -619,6 +609,9 @@ const Home = () => {
                           color: "#4b5563",
                           fontSize: "13px",
                           height: "55px",
+                          "@media (max-width: 600px)": {
+                            height: "unset",
+                          },
                         }}
                       >
                         {item?.description?.length > 150
@@ -699,7 +692,7 @@ const Home = () => {
             </Grid>
           </Box>
         </Grid>
-        <Grid item xs={1}></Grid>
+        <Grid item xs={1} md={1}></Grid>
       </Grid>
     </Box>
   );
